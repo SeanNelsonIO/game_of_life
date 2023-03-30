@@ -8,8 +8,8 @@ WIDTH = 5
 
 MARGIN = 1
 
-GRID_HEIGHT = 50
-GRID_WIDTH = 50
+GRID_HEIGHT = 100
+GRID_WIDTH = 100
 
 # Define some colors
 BLACK = (0, 0, 0)
