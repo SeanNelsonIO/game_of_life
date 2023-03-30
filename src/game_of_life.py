@@ -35,6 +35,8 @@ def run_game_loop(ca):
 
     clock = pygame.time.Clock()
 
+    paused = True
+
     while game_loop:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -46,12 +48,18 @@ def run_game_loop(ca):
                 col = pos[0] // (WIDTH + MARGIN)
                 row = pos[1] // (HEIGHT + MARGIN)
 
-                ca.grid[row][col] = 1
+                ca.grid[row][col] = not ca.grid[row][col]
                 print(f"Mouse down: {pos} at Grid: {row},{col}")
             elif event.type == pygame.KEYDOWN:
                 # Handle keypress to draw next update
-                if event.key == pygame.K_RETURN:
+                if paused and event.key == pygame.K_RETURN:
                     ca.update_grid()
+
+                if event.key == pygame.K_SPACE:
+                    paused = not paused
+
+        if not paused:
+            ca.update_grid()
 
         screen.fill(BLACK)
 
@@ -74,7 +82,6 @@ def run_game_loop(ca):
         clock.tick(60)
         pygame.display.flip()
 
-    pygame.quit()
-
 
 run_game_loop(ca)
+pygame.quit()
