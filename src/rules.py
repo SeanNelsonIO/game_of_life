@@ -7,17 +7,17 @@ def game_of_life_rule(grid, i, j):
                 continue
             if grid[(i + x) % len(grid)][(j + y) % len(grid[0])] == 1:
                 neighbours += 1
-    if grid[i][j] == 1:
-        if neighbours < 2:
+    if grid[i][j] == 1: #if cell is alive
+        if neighbours < 2: #if cell has less than 2 neighbours, it dies
             return 0
-        elif neighbours > 3:
-            return 0
-        else:
+        elif neighbours > 3: #if cell has more than 3 neighbours, it dies
+            return 0 
+        else: #if cell has 2 or 3 neighbours, it lives
             return 1
-    else:
-        if neighbours == 3:
+    else: #if cell is dead
+        if neighbours == 3: #if cell has 3 neighbours, it becomes alive
             return 1
-        else:
+        else: #if cell has less than 3 or more than 3 neighbours, it stays dead
             return 0
         
 def rule_30(grid, i, j):

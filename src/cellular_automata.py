@@ -23,7 +23,7 @@ class CellularAutomata:
         return grid
 
     def populate_grid_with_seed(self):
-        self.grid = np.random.randint(2, size=(self.grid_size[0], self.grid_size[1]), low=1)
+        self.grid = np.random.randint(2, size=(self.grid_size[0], self.grid_size[1]))
     
     def populate_grid_with_state_file(self, file_path):
         file = open(file_path, "r")
@@ -34,7 +34,7 @@ class CellularAutomata:
         file.close()
 
     def update_grid(self):
-        new_grid = self.create_grid()
+        new_grid = np.zeros((self.grid_size[0], self.grid_size[1]), dtype=int)
         for i in range(self.grid_size[0]):
             for j in range(self.grid_size[1]):
                 new_grid[i][j] = self.rule(self.grid, i, j)
