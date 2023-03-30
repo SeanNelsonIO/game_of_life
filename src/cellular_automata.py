@@ -1,10 +1,11 @@
 import random
 import numpy as np
 
+
 class CellularAutomata:
     def __init__(self, grid_size, cell_size, rule, seed=None):
         self.grid_size = grid_size
-        self.cell_size = cell_size #used as a metric for UI - not used in the logic
+        self.cell_size = cell_size  # used as a metric for UI - not used in the logic
         self.rule = rule
 
         # Create empty grid - all values set to zero
@@ -24,7 +25,7 @@ class CellularAutomata:
 
     def populate_grid_with_seed(self):
         self.grid = np.random.randint(2, size=(self.grid_size[0], self.grid_size[1]))
-    
+
     def populate_grid_with_state_file(self, file_path):
         file = open(file_path, "r")
         lines = file.readlines()
@@ -42,7 +43,7 @@ class CellularAutomata:
 
     def get_grid(self):
         return self.grid
-    
+
     def save_grid_to_file(self, file_name):
         file = open(file_name, "w")
         for i in range(self.grid_size[0]):
