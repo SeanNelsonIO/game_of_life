@@ -7,30 +7,29 @@ class TestCellularAutomata(unittest.TestCase):
         return super().setUp()
 
     def test_inialisation_of_cellular_automata(self) -> None:
-        ca = CellularAutomata((10, 10), 10, None, [0, 1, 0, 1, 0, 1, 0, 1, 0, 1])
+        ca = CellularAutomata((10, 10), None, [0, 1, 0, 1, 0, 1, 0, 1, 0, 1])
         self.assertEqual(ca.grid_size, (10, 10))
-        self.assertEqual(ca.cell_size, 10)
         self.assertEqual(ca.rule, None)
         self.assertEqual(ca.seed, [0, 1, 0, 1, 0, 1, 0, 1, 0, 1])
-        self.assertEqual(
+        self.assertListEqual(
             ca.grid,
             [
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 1, 0, 0, 0, 0, 0, 1, 0],
+                [1, 0, 0, 1, 1, 1, 0, 1, 0, 0],
+                [1, 1, 0, 0, 0, 1, 1, 0, 1, 1],
+                [0, 1, 1, 1, 1, 1, 0, 1, 0, 0],
+                [1, 0, 1, 1, 0, 1, 1, 0, 1, 1],
+                [1, 0, 0, 1, 1, 1, 1, 0, 0, 1],
+                [0, 1, 0, 1, 0, 1, 0, 1, 1, 0],
+                [1, 0, 0, 1, 1, 1, 1, 1, 1, 0],
+                [1, 1, 0, 0, 1, 1, 0, 1, 0, 0],
+                [0, 0, 1, 0, 0, 1, 0, 0, 1, 0],
             ],
         )
 
     def test_create_grid(self) -> None:
-        ca = CellularAutomata((10, 10), 10, None, [0, 1, 0, 1, 0, 1, 0, 1, 0, 1])
-        self.assertEqual(
+        ca = CellularAutomata((10, 10), None, [0, 1, 0, 1, 0, 1, 0, 1, 0, 1])
+        self.assertListEqual(
             ca.create_grid(),
             [
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],

@@ -5,9 +5,10 @@ import numpy as np
 
 
 class CellularAutomata:
-    def __init__(self, grid_size: int, rule: Callable, seed: int = None):
+    def __init__(self, grid_size: int, rule: Callable, seed: int | list[int] = None):
         self.grid_size = grid_size
         self.rule = rule
+        self.seed = seed
 
         # Create empty grid - all values set to zero
         self.grid = self.create_grid()
@@ -26,6 +27,7 @@ class CellularAutomata:
 
     def populate_grid_with_seed(self) -> None:
         self.grid = np.random.randint(2, size=(self.grid_size[0], self.grid_size[1]))
+        self.grid = self.grid.tolist()
 
     def populate_grid_with_state_file(self, file_path: str) -> None:
         file = open(file_path, "r")
