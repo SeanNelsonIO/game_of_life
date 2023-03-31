@@ -81,7 +81,7 @@ def run_game_loop(ca):
 
         clock.tick(60)
         pygame.display.flip()
+    pygame.quit()
 
 
 run_game_loop(ca)
-pygame.quit()
