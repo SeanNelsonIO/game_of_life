@@ -1,6 +1,7 @@
 import pygame
 import pygame_gui
 
+from pygame_gui.elements import UIButton, UIPanel, UITextEntryLine
 from pygame_gui.ui_manager import UIManager
 
 from src import rules
@@ -11,13 +12,14 @@ from src.cellular_automata import CellularAutomata
 class CellularAutomataApp:
     def __init__(self) -> None:
         pygame.init()
+        pygame.display.set_caption("Cellular Automata App")
 
         # Setup cell dimension defaults
         self.set_cell_dimensions(5, 5, 1)
 
         # Setup default number of cells in grid
         self.set_grid_dimensions(100, 100)
-        self.set_grid_padding(100, 100)
+        self.set_grid_padding(300, 50)
         self.set_grid_window_size()
 
         # Setup grid colours
@@ -31,12 +33,24 @@ class CellularAutomataApp:
         self.set_ca()
 
         # Setup UI elements
-        self.window_size = (800, 800)
+        self.window_size = (1000, 800)
         self.window_surface = pygame.display.set_mode(self.window_size)
         self.ui_manager = UIManager(self.window_size, "data/themes/theme.json")
 
         self.background = pygame.Surface(self.window_size)
         self.background.fill(self.ui_manager.ui_theme.get_colour("dark_bg"))
+
+        self.seed_panel = None
+        self.random_seed_button = None
+        self.seed_text_entry = None
+        self.use_seed_button = None
+
+        self.rules_panel = None
+        self.rules_dropdown = None
+
+        self.state_panel = None
+        self.save_state_button = None
+        self.load_state_button = None
 
         self.create_ui()
 
@@ -47,7 +61,36 @@ class CellularAutomataApp:
         self.print_params()
 
     def create_ui(self) -> None:
-        pass
+        self.ui_manager.clear_and_reset()
+
+        self.seed_panel = UIPanel(
+            pygame.Rect(50, 50, 200, self.grid_window_size[1]),
+            starting_layer_height=4,
+            manager=self.ui_manager,
+        )
+
+        self.random_seed_button = UIButton(
+            pygame.Rect(10, 10, 175, 30),
+            "Generate Seed",
+            manager=self.ui_manager,
+            container=self.seed_panel,
+            object_id="#random_seed_button",
+        )
+
+        self.seed_text_entry = UITextEntryLine(
+            pygame.Rect(10, 45, 175, 30),
+            manager=self.ui_manager,
+            container=self.seed_panel,
+            object_id="#seed_text_entry",
+        )
+
+        self.use_seed_button = UIButton(
+            pygame.Rect(10, 80, 175, 30),
+            "Use Seed",
+            manager=self.ui_manager,
+            container=self.seed_panel,
+            object_id="#use_seed_button",
+        )
 
     def set_cell_dimensions(self, width: int, height: int, margin: int) -> None:
         self.cell_height = height
