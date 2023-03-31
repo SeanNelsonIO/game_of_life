@@ -6,7 +6,7 @@ class TestCellularAutomata(unittest.TestCase):
     def setUp(self) -> None:
         return super().setUp()
 
-    def test_inialisation_of_cellular_automata(self):
+    def test_inialisation_of_cellular_automata(self) -> None:
         ca = CellularAutomata((10, 10), 10, None, [0, 1, 0, 1, 0, 1, 0, 1, 0, 1])
         self.assertEqual(ca.grid_size, (10, 10))
         self.assertEqual(ca.cell_size, 10)
@@ -28,7 +28,7 @@ class TestCellularAutomata(unittest.TestCase):
             ],
         )
 
-    def test_create_grid(self):
+    def test_create_grid(self) -> None:
         ca = CellularAutomata((10, 10), 10, None, [0, 1, 0, 1, 0, 1, 0, 1, 0, 1])
         self.assertEqual(
             ca.create_grid(),

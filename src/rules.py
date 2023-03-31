@@ -1,4 +1,4 @@
-def game_of_life_rule(grid, i, j):
+def game_of_life_rule(grid: list[list[int]], i: int, j: int):
     neighbours = 0
     # count number of neighbours
     for x in range(-1, 2):
@@ -21,7 +21,7 @@ def game_of_life_rule(grid, i, j):
             return 0
 
 
-def rule_30(grid, i, j):
+def rule_30(grid: list[list[int]], i: int, j: int):
     neighbours = 0
     # count number of neighbours
     for x in range(-1, 2):
@@ -42,7 +42,7 @@ def rule_30(grid, i, j):
             return 0
 
 
-def rule_90(grid, i, j):
+def rule_90(grid: list[list[int]], i: int, j: int):
     neighbours = 0
     # count number of neighbours
     for x in range(-1, 2):
@@ -63,7 +63,7 @@ def rule_90(grid, i, j):
             return 0
 
 
-def rule_110(grid, i, j):
+def rule_110(grid: list[list[int]], i: int, j: int):
     neighbours = 0
     # count number of neighbours
     for x in range(-1, 2):
@@ -84,7 +84,7 @@ def rule_110(grid, i, j):
             return 0
 
 
-def rule_184(grid, i, j):
+def rule_184(grid: list[list[int]], i: int, j: int):
     neighbours = 0
     # count number of neighbours
     for x in range(-1, 2):
