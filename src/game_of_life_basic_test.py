@@ -24,13 +24,13 @@ window_width = (GRID_WIDTH * WIDTH) + MARGIN + (GRID_WIDTH * MARGIN)
 
 WINDOW_SIZE = [window_height, window_width]
 
-ca = CellularAutomata([GRID_HEIGHT, GRID_WIDTH], 1, game_of_life_rule, seed=1234)
+ca = CellularAutomata([GRID_HEIGHT, GRID_WIDTH], game_of_life_rule, seed=1234)
 
 screen = pygame.display.set_mode(WINDOW_SIZE)
 pygame.display.set_caption("Game of Life")
 
 
-def run_game_loop(ca):
+def run_game_loop(ca) -> None:
     game_loop = True
 
     clock = pygame.time.Clock()
