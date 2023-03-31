@@ -1,5 +1,6 @@
 from typing import Callable
 
+import ast
 import random
 import numpy as np
 
@@ -29,13 +30,22 @@ class CellularAutomata:
         self.grid = np.random.randint(2, size=(self.grid_size[0], self.grid_size[1]))
         self.grid = self.grid.tolist()
 
-    def populate_grid_with_state_file(self, file_path: str) -> None:
+    def populate_grid_with_state_file(
+        self, file_path: str, load_seed: bool = True
+    ) -> None:
         file = open(file_path, "r")
         lines = file.readlines()
+        if load_seed:
+            self.interpret_seed_str(lines[0])
+
         for i in range(self.grid_size[0]):
             for j in range(self.grid_size[1]):
-                self.grid[i][j] = int(lines[i][j])
+                self.grid[i][j] = int(lines[i + 1][j])
         file.close()
+
+    def interpret_seed_str(self, seed_str):
+        raw_seed = seed_str.split(":")[1]
+        self.seed = ast.literal_eval(raw_seed)
 
     def update_grid(self) -> None:
         new_grid = np.zeros((self.grid_size[0], self.grid_size[1]), dtype=int)
@@ -49,6 +59,7 @@ class CellularAutomata:
 
     def save_grid_to_file(self, file_name: str) -> None:
         file = open(file_name, "w")
+        file.write(f"Seed:{self.seed}\n")
         for i in range(self.grid_size[0]):
             for j in range(self.grid_size[1]):
                 file.write(str(self.grid[i][j]))
