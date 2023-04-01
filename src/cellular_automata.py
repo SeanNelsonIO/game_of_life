@@ -9,14 +9,11 @@ class CellularAutomata:
     def __init__(self, grid_size: int, rule: Callable, seed: int | list[int] = None):
         self.grid_size = grid_size
         self.rule = rule
-        self.seed = seed
 
         # Create empty grid - all values set to zero
         self.grid = self.create_grid()
-
-        if seed is not None:
-            np.random.seed(seed)
-            self.populate_grid_with_seed()
+        if seed:
+            self.set_seed(seed)
 
     def create_grid(self) -> None:
         grid = []
@@ -25,6 +22,15 @@ class CellularAutomata:
             for j in range(self.grid_size[1]):
                 grid[i].append(0)
         return grid
+
+    def set_seed(self, seed: int | list[int] | None):
+        # Clear grid if setting no seed
+        if not seed:
+            self.grid = self.create_grid()
+            return
+
+        np.random.seed(seed)
+        self.populate_grid_with_seed()
 
     def populate_grid_with_seed(self) -> None:
         self.grid = np.random.randint(2, size=(self.grid_size[0], self.grid_size[1]))

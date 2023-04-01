@@ -1,36 +1,26 @@
+import ast
 import pygame
 import pygame_gui
+import random
 
-from pygame_gui.elements import UIButton, UIPanel, UITextEntryLine
+from pygame_gui.elements import (
+    UIButton,
+    UILabel,
+    UIPanel,
+    UITextBox,
+    UITextEntryLine,
+    UITooltip,
+)
 from pygame_gui.ui_manager import UIManager
 
 from src import rules
-from src import colours
-from src.cellular_automata import CellularAutomata
+from src.cell_grid import CellGrid
 
 
 class CellularAutomataApp:
     def __init__(self) -> None:
         pygame.init()
         pygame.display.set_caption("Cellular Automata App")
-
-        # Setup cell dimension defaults
-        self.set_cell_dimensions(5, 5, 1)
-
-        # Setup default number of cells in grid
-        self.set_grid_dimensions(100, 100)
-        self.set_grid_padding(300, 50)
-        self.set_grid_window_size()
-
-        # Setup grid colours
-        self.bg_grid_colour = colours.BLACK
-        self.empty_space_colour = colours.WHITE
-        self.cell_colour = colours.RED
-
-        # Setup Cellular Automata defaults
-        self.rule = rules.game_of_life_rule
-        self.seed = None
-        self.set_ca()
 
         # Setup UI elements
         self.window_size = (1000, 800)
@@ -44,9 +34,15 @@ class CellularAutomataApp:
         self.random_seed_button = None
         self.seed_text_entry = None
         self.use_seed_button = None
+        self.current_seed_button = None
 
         self.rules_panel = None
         self.rules_dropdown = None
+
+        self.control_panel = None
+        self.speed_slider = None
+        self.pause_button = None
+        self.next_button = None
 
         self.state_panel = None
         self.save_state_button = None
@@ -58,19 +54,36 @@ class CellularAutomataApp:
         self.is_running = True
         self.is_paused = True
 
-        self.print_params()
-
     def create_ui(self) -> None:
         self.ui_manager.clear_and_reset()
 
+        # Setup Cellular Automata Grid with defaults
+        default_rule = rules.game_of_life_rule
+        self.grid_padding = (296, 50)
+        self.cell_grid = CellGrid(default_rule, (100, 100))
+
+        panel_item_rect = pygame.Rect(10, 5, 175, 30)
+
+        self.create_seed_panel(panel_item_rect)
+        self.create_rules_panel(panel_item_rect)
+        self.create_control_panel(panel_item_rect)
+        self.create_state_panel(panel_item_rect)
+
+    def create_seed_panel(self, panel_item_rect: pygame.Rect) -> None:
         self.seed_panel = UIPanel(
-            pygame.Rect(50, 50, 200, self.grid_window_size[1]),
+            pygame.Rect(48, 48, 200, self.cell_grid.window_size[1] + 4),
             starting_layer_height=4,
             manager=self.ui_manager,
         )
 
+        # Panel item rect defaults
+        pad_width = panel_item_rect.x
+        pad_height = panel_item_rect.y
+        height = panel_item_rect.height
+        width = panel_item_rect.width
+
         self.random_seed_button = UIButton(
-            pygame.Rect(10, 10, 175, 30),
+            pygame.Rect(pad_width, pad_height * 2, width, height),
             "Generate Seed",
             manager=self.ui_manager,
             container=self.seed_panel,
@@ -78,122 +91,138 @@ class CellularAutomataApp:
         )
 
         self.seed_text_entry = UITextEntryLine(
-            pygame.Rect(10, 45, 175, 30),
+            panel_item_rect,
             manager=self.ui_manager,
             container=self.seed_panel,
             object_id="#seed_text_entry",
+            placeholder_text="     Enter Seed",
+            anchors={"top_target": self.random_seed_button},
         )
 
         self.use_seed_button = UIButton(
-            pygame.Rect(10, 80, 175, 30),
+            panel_item_rect,
             "Use Seed",
             manager=self.ui_manager,
             container=self.seed_panel,
             object_id="#use_seed_button",
+            anchors={"top_target": self.seed_text_entry},
         )
 
-    def set_cell_dimensions(self, width: int, height: int, margin: int) -> None:
-        self.cell_height = height
-        self.cell_width = width
-        self.cell_margin = margin
+        self.current_seed_button = UIButton(
+            panel_item_rect,
+            text="Current Seed",
+            manager=self.ui_manager,
+            container=self.seed_panel,
+            object_id="#view_seed_button",
+            anchors={"top_target": self.use_seed_button},
+        )
+        self.set_current_seed_tooltip()
 
-    def set_grid_dimensions(self, width: int, height: int) -> None:
-        self.grid_height = height
-        self.grid_width = width
-
-    def set_grid_padding(self, width: int = 0, height: int = 0) -> None:
-        self.pad_width = width
-        self.pad_height = height
-
-    def set_grid_window_size(self) -> None:
-        grid_window_height = (
-            (self.grid_height * self.cell_height)
-            + (self.grid_height * self.cell_margin)
-            + self.cell_margin
+        self.clear_grid_button = UIButton(
+            panel_item_rect,
+            text="Clear Grid",
+            manager=self.ui_manager,
+            container=self.seed_panel,
+            object_id="#clear_grid_button",
+            anchors={"top_target": self.current_seed_button},
         )
 
-        grid_window_width = (
-            (self.grid_width * self.cell_width)
-            + (self.grid_width * self.cell_margin)
-            + self.cell_margin
-        )
+        # self.seed_text_box = UITextBox()
 
-        self.grid_surface = pygame.Surface((grid_window_width, grid_window_height))
-        self.grid_window_size = (grid_window_width, grid_window_height)
+    def create_rules_panel(self, panel_item_rect: pygame.Rect) -> None:
+        pass
 
-    # debug
-    def print_params(self) -> None:
-        print(
-            (
-                f"Cell Size: {self.cell_width} x {self.cell_height}, "
-                f"Margin: {self.cell_margin}"
-            )
-        )
-        print(f"Grid Dimensions: {self.grid_width} x {self.grid_height}")
-        print(f"Grid Window Size: {self.grid_window_size}")
-        print(f"Grid Background Colour: {self.bg_grid_colour}")
-        print(f"Empty Space Colour: {self.empty_space_colour}")
+    def create_control_panel(self, panel_item_rect: pygame.Rect) -> None:
+        pass
 
-    def set_ca(self) -> None:
-        self.ca = CellularAutomata(
-            [self.grid_height, self.grid_width], self.rule, self.seed
+    def create_state_panel(self, panel_item_rect: pygame.Rect) -> None:
+        pass
+
+    def set_current_seed_tooltip(self) -> None:
+        if not self.cell_grid.seed:
+            seed = "No Seed Used"
+        else:
+            seed = str(self.cell_grid.seed)
+
+        tooltip_text = (
+            "<b>Current Seed:</b>" "<br>" f"<font color=#F44336>{seed}</font>"
         )
+        self.current_seed_button.tool_tip_text = tooltip_text
+
+    def set_grid_seed(self) -> None:
+        seed = None
+        seed_text = self.seed_text_entry.get_text().strip()
+        # print(f"Seed Text: {seed_text}")
+        # print(f"Seed Type: {type(seed_text)}")
+
+        try:
+            raw_seed = ast.literal_eval(seed_text)
+            # print(f"Raw Seed Type: {type(raw_seed)}")
+            if isinstance(raw_seed, int):
+                seed = raw_seed
+            elif isinstance(raw_seed, list):
+                seed = [int(s) for s in raw_seed]
+        except Exception:
+            # print("Cannot Decipher Seed")
+            pass
+
+        if seed is not None:
+            self.cell_grid.set_seed(seed)
+            self.set_current_seed_tooltip()
 
     def pause(self) -> None:
         self.is_paused = not self.is_paused
 
-    def process_mouseclick(self) -> None:
+    def process_mouseclick(self, event) -> None:
         pos = pygame.mouse.get_pos()
-        col = (pos[0] - self.pad_width) // (self.cell_width + self.cell_margin)
-        row = (pos[1] - self.pad_height) // (self.cell_height + self.cell_margin)
+        self.cell_grid.click(pos, self.grid_padding)
 
-        if not self.is_position_in_grid(row, col):
-            return
-
-        # invert cell state
-        self.ca.grid[row][col] = not self.ca.grid[row][col]
-        print(f"Mouse down: {pos} at Grid: {row},{col}")
-
-    def is_position_in_grid(self, row, col) -> bool:
-
-        row_in_bounds = self.grid_height > row >= 0
-        col_in_bounds = self.grid_width > col >= 0
-
-        return row_in_bounds and col_in_bounds
-
-    def process_keypress(self, key) -> None:
-        if key == pygame.K_SPACE:
+    def process_keypress(self, event) -> None:
+        if event.key == pygame.K_SPACE:
             self.pause()
-        if self.is_paused and key == pygame.K_RETURN:
-            self.ca.update_grid()
+        if self.is_paused and event.key == pygame.K_RETURN:
+            self.cell_grid.update()
+
+    def process_button_press(self, event):
+        if event.ui_element == self.random_seed_button:
+            new_seed = random.randint(0, 100000)
+            self.seed_text_entry.set_text(str(new_seed))
+
+        if event.ui_element == self.use_seed_button:
+            self.set_grid_seed()
+
+        if event.ui_element == self.current_seed_button:
+            if not self.cell_grid.seed:
+                seed = "No Seed Used"
+            else:
+                seed = str(self.cell_grid.seed)
+            self.seed_text_entry.set_text(seed)
+
+        if event.ui_element == self.clear_grid_button:
+            self.cell_grid.set_seed(None)
+            self.set_current_seed_tooltip()
+
+    def process_text_entry(self, event):
+        pass
 
     def process_events(self) -> None:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.is_running = False
-            elif event.type == pygame.KEYDOWN:
-                self.process_keypress(event.key)
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                self.process_mouseclick()
 
             self.ui_manager.process_events(event)
 
-        if not self.is_paused:
-            self.ca.update_grid()
+            if event.type == pygame.KEYDOWN:
+                self.process_keypress(event)
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                self.process_mouseclick(event)
+            if event.type == pygame_gui.UI_BUTTON_PRESSED:
+                self.process_button_press(event)
+            if event.type == pygame_gui.UI_TEXT_ENTRY_FINISHED:
+                self.process_text_entry(event)
 
-    def draw_grid(self, surface: pygame.Surface) -> None:
-        surface.fill(self.bg_grid_colour)
-        for row in range(self.grid_height):
-            for col in range(self.grid_width):
-                colour = self.empty_space_colour
-                if self.ca.grid[row][col] == 1:
-                    colour = self.cell_colour
-                start_pos = (
-                    (self.cell_margin + self.cell_width) * col + self.cell_margin,
-                    (self.cell_margin + self.cell_height) * row + self.cell_margin,
-                )
-                cell_rect = pygame.Rect(start_pos, (self.cell_width, self.cell_height))
-                pygame.draw.rect(surface, colour, cell_rect)
+        if not self.is_paused:
+            self.cell_grid.update()
 
     def run(self) -> None:
         while self.is_running:
@@ -206,9 +235,11 @@ class CellularAutomataApp:
             self.window_surface.blit(self.background, (0, 0))
             self.ui_manager.draw_ui(self.window_surface)
 
-            self.draw_grid(self.grid_surface)
-            self.window_surface.blit(
-                self.grid_surface, (self.pad_width, self.pad_height)
-            )
+            # draw grid on window
+            self.cell_grid.draw()
+            self.window_surface.blit(self.cell_grid.surface, self.grid_padding)
 
             pygame.display.update()
+
+        pygame.display.quit()
+        pygame.quit()
