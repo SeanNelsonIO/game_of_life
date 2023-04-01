@@ -9,6 +9,7 @@ class CellularAutomata:
     def __init__(self, grid_size: int, rule: Callable, seed: int | list[int] = None):
         self.grid_size = grid_size
         self.rule = rule
+        self.seed = seed
 
         # Create empty grid - all values set to zero
         self.grid = self.create_grid()
@@ -24,6 +25,7 @@ class CellularAutomata:
         return grid
 
     def set_seed(self, seed: int | list[int] | None):
+        self.seed = seed
         # Clear grid if setting no seed
         if not seed:
             self.grid = self.create_grid()
