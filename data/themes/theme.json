@@ -2,7 +2,23 @@
     "button": {
         "misc": {
             "shape": "rounded_rectangle",
-            "shape_corner_radius": "2",
+            "shape_corner_radius": "3",
+            "border_width": "1",
+            "shadow_width": "2"
+        }
+    },
+    "text_entry_line": {
+        "misc": {
+            "shape": "rounded_rectangle",
+            "shape_corner_radius": "3",
+            "border_width": "1",
+            "shadow_width": "2"
+        }
+    },
+    "panel": {
+        "misc": {
+            "shape": "rounded_rectangle",
+            "shape_corner_radius": "3",
             "border_width": "1",
             "shadow_width": "2"
         }
