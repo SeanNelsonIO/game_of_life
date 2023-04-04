@@ -78,7 +78,7 @@ class CellGrid:
     def update(self) -> None:
         self.ca.update_grid()
 
-    def click(self, pos, padding):
+    def click(self, pos, padding) -> None:
         col = (pos[0] - padding[0]) // (self.cell_width + self.cell_margin)
         row = (pos[1] - padding[1]) // (self.cell_height + self.cell_margin)
 
@@ -88,6 +88,65 @@ class CellGrid:
         # invert cell state
         self.ca.grid[row][col] = not self.ca.grid[row][col]
         print(f"Mouse down: {pos} at Grid: {row},{col}")
+
+    def paint(self, previous_pos, current_pos, padding) -> None:
+        col = (current_pos[0] - padding[0]) // (self.cell_width + self.cell_margin)
+        row = (current_pos[1] - padding[1]) // (self.cell_height + self.cell_margin)
+
+        if not self.is_position_in_grid(row, col):
+            return
+
+        self.ca.grid[row][col] = 1
+        print(f"Mouse down: {current_pos} at Grid: {row},{col}")
+
+        # interpolate between previous and current position
+        self.interpolate_cells(previous_pos, current_pos, padding)
+
+    def erase(self, previous_pos, current_pos, padding) -> None:
+        col = (current_pos[0] - padding[0]) // (self.cell_width + self.cell_margin)
+        row = (current_pos[1] - padding[1]) // (self.cell_height + self.cell_margin)
+
+        if not self.is_position_in_grid(row, col):
+            return
+
+        self.ca.grid[row][col] = 0
+        print(f"Mouse down: {current_pos} at Grid: {row},{col}")
+
+        # interpolate between previous and current position
+        self.interpolate_cells(previous_pos, current_pos, padding)
+
+
+    def interpolate_cells(self, previous_pos, current_pos, padding) -> None:
+        if previous_pos == current_pos:
+            return
+        if previous_pos is None:
+            return
+
+        dx = abs(current_pos[0] - previous_pos[0])
+        dy = abs(current_pos[1] - previous_pos[1])
+
+        if dx == 0 and dy == 0:
+            return
+        
+        step_size = 1 / max(dx, dy)
+
+        t = 0.
+        while t < 1:
+            x = int((1-t) * previous_pos[0] + (t * current_pos[0]))
+            y = int((1-t) * previous_pos[1] + (t * current_pos[1]))
+
+            col = (x - padding[0]) // (self.cell_width + self.cell_margin)
+            row = (y - padding[1]) // (self.cell_height + self.cell_margin)
+
+            if not self.is_position_in_grid(row, col):
+                return
+
+            self.ca.grid[row][col] = 1
+            
+            t = t + step_size
+
+
+        
 
     def is_position_in_grid(self, row, col) -> bool:
 
