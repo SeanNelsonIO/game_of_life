@@ -79,6 +79,7 @@ class CellGrid:
         self.ca.update_grid()
 
     def click(self, pos, padding) -> None:
+        
         col = (pos[0] - padding[0]) // (self.cell_width + self.cell_margin)
         row = (pos[1] - padding[1]) // (self.cell_height + self.cell_margin)
 
@@ -87,7 +88,42 @@ class CellGrid:
 
         # invert cell state
         self.ca.grid[row][col] = not self.ca.grid[row][col]
+
+        self.draw_circle(pos, padding)
+
         print(f"Mouse down: {pos} at Grid: {row},{col}")
+
+    def draw_circle(self, pos, padding) -> None:
+        from math import cos, sin
+        # static const double PI = 3.1415926535;
+        # double i, angle, x1, y1;
+
+        # for(i = 0; i < 360; i += 0.1)
+        # {
+        #         angle = i;
+        #         x1 = r * cos(angle * PI / 180);
+        #         y1 = r * sin(angle * PI / 180);
+        #         putpixel(x + x1, y + y1, color);
+        # }
+        for angle in range(1, 360):
+            x1 = 50 * cos(angle * 3.1415926535 / 180)
+            y1 = 50 * sin(angle * 3.1415926535 / 180)
+
+            circumference_x = int(pos[0] + x1)
+            circumference_y = int(pos[1] + y1)
+
+            col = (circumference_x - padding[0]) // (self.cell_width + self.cell_margin)
+            row = (circumference_y - padding[1]) // (self.cell_height + self.cell_margin)
+
+            if not self.is_position_in_grid(row, col):
+                return
+
+            self.ca.grid[row][col] = 1
+
+            self.interpolate_cells(pos, (circumference_x, circumference_y), padding)
+        
+
+        
 
     def paint(self, previous_pos, current_pos, padding) -> None:
         col = (current_pos[0] - padding[0]) // (self.cell_width + self.cell_margin)
@@ -98,6 +134,8 @@ class CellGrid:
 
         self.ca.grid[row][col] = 1
         print(f"Mouse down: {current_pos} at Grid: {row},{col}")
+
+        self.draw_circle(current_pos, padding)
 
         # interpolate between previous and current position
         self.interpolate_cells(previous_pos, current_pos, padding)
