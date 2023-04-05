@@ -70,6 +70,6 @@ class CellularAutomata:
         file.write(f"Seed:{self.seed}\n")
         for i in range(self.grid_size[0]):
             for j in range(self.grid_size[1]):
-                file.write(str(self.grid[i][j]))
+                file.write(str(int(self.grid[i][j])))
             file.write("\n")
         file.close()
