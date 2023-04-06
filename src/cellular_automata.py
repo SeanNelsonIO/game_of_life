@@ -51,7 +51,7 @@ class CellularAutomata:
                 self.grid[i][j] = int(lines[i + 1][j])
         file.close()
 
-    def interpret_seed_str(self, seed_str):
+    def interpret_seed_str(self, seed_str) -> None:
         raw_seed = seed_str.split(":")[1]
         self.seed = ast.literal_eval(raw_seed)
 

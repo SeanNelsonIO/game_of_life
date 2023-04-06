@@ -82,7 +82,7 @@ class CellularAutomataApp:
         self.create_control_panel(default_panel_item_rect)
         self.create_seed_panel(default_panel_item_rect)
         self.create_rules_panel(default_panel_item_rect)
-        self.create_state_panel(default_panel_item_rect)
+        # self.create_state_panel(default_panel_item_rect)
 
     def create_control_panel(self, panel_item_rect: pygame.Rect) -> None:
         self.control_panel = UIPanel(
@@ -195,7 +195,7 @@ class CellularAutomataApp:
 
     def create_rules_panel(self, panel_item_rect: pygame.Rect) -> None:
         self.rules_panel = UIPanel(
-            pygame.Rect(48, 16, 200, 121),
+            pygame.Rect(48, 16, 200, 191),
             starting_layer_height=4,
             manager=self.ui_manager,
             anchors={"top_target": self.seed_panel},
@@ -209,7 +209,7 @@ class CellularAutomataApp:
         )
 
         self.rules_dropdown = UIDropDownMenu(
-            ["Game of Life", "Rule  30", "Rule  90", "Rule  110", "Rule  184"],
+            ["Game of Life", "Rule 30", "Rule 90", "Rule 110", "Rule 184"],
             "Game of Life",
             panel_item_rect,
             manager=self.ui_manager,
@@ -225,31 +225,19 @@ class CellularAutomataApp:
             anchors={"top_target": self.rules_dropdown},
         )
 
-    def create_state_panel(self, panel_item_rect: pygame.Rect) -> None:
-        self.state_panel = UIPanel(
-            pygame.Rect(48, 16, 200, 91),
-            starting_layer_height=4,
-            manager=self.ui_manager,
-            anchors={"top_target": self.rules_panel},
-        )
-
         self.save_state_button = UIButton(
-            pygame.Rect(
-                panel_item_rect.x,
-                panel_item_rect.y * 2,
-                panel_item_rect.width,
-                panel_item_rect.height,
-            ),
+            panel_item_rect,
             "Save Grid State",
             manager=self.ui_manager,
-            container=self.state_panel,
+            container=self.rules_panel,
+            anchors={"top_target": self.rules_state_button},
         )
 
         self.load_state_button = UIButton(
             panel_item_rect,
             "Load Grid State",
             manager=self.ui_manager,
-            container=self.state_panel,
+            container=self.rules_panel,
             anchors={"top_target": self.save_state_button},
         )
 
@@ -312,6 +300,33 @@ class CellularAutomataApp:
     def next(self) -> None:
         if self.is_paused:
             self.cell_grid.update()
+
+    def save_state(self, path: str) -> None:
+        if os.path.isfile(path):
+            dialog_text = (
+                f"The specified file at path: <b>{path}</b> "
+                "already exists, are you sure you want to overwrite this file?"
+            )
+            self.overwrite_dialog = UIConfirmationDialog(
+                pygame.Rect(160, 50, 440, 250),
+                manager=self.ui_manager,
+                window_title="Confirm Overwrite",
+                action_short_name="Overwrite",
+                action_long_desc=dialog_text,
+                blocking=True,
+            )
+            self.overwrite_dialog.overwrite_path = path
+            return
+
+        _, ext = os.path.splitext(path)
+        if not ext == ".state":
+            path += ".state"
+
+        self.cell_grid.ca.save_grid_to_file(path)
+
+    def load_state(self, path: str) -> None:
+        self.cell_grid.ca.populate_grid_with_state_file(path)
+        self.seed_text_entry.set_text(str(self.cell_grid.ca.seed))
 
     def create_file_dialog(self, load: bool) -> None:
         if load:
@@ -391,26 +406,12 @@ class CellularAutomataApp:
             self.overwrite_dialog = None
 
     def process_file_dialog_selection(self, event: pygame.event.Event) -> None:
-        path = event.text
         if not self.file_dialog.load:
-            if os.path.isfile(path):
-                dialog_text = (
-                    f"The specified file at path: <b>{path}</b> "
-                    "already exists, are you sure you want to overwrite this file?"
-                )
-                self.overwrite_dialog = UIConfirmationDialog(
-                    pygame.Rect(160, 50, 440, 250),
-                    manager=self.ui_manager,
-                    window_title="Confirm Overwrite",
-                    action_short_name="Overwrite",
-                    action_long_desc=dialog_text,
-                    blocking=True,
-                )
-                self.overwrite_dialog.overwrite_path = path
-                return
+            self.save_state(event.text)
 
-            self.cell_grid.ca.save_grid_to_file(path)
-        print(path)
+        else:
+            self.load_state(event.text)
+        print(event.text)
 
     def process_confirmation_dialog_confirmed(self, event: pygame.event.Event):
         self.cell_grid.ca.save_grid_to_file(self.overwrite_dialog.overwrite_path)
