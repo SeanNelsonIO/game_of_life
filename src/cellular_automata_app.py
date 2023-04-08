@@ -326,7 +326,8 @@ class CellularAutomataApp:
 
     def load_state(self, path: str) -> None:
         self.cell_grid.ca.populate_grid_with_state_file(path)
-        self.seed_text_entry.set_text(str(self.cell_grid.ca.seed))
+        if self.cell_grid.ca.seed:
+            self.seed_text_entry.set_text(str(self.cell_grid.ca.seed))
 
     def create_file_dialog(self, load: bool) -> None:
         if load:
@@ -381,8 +382,9 @@ class CellularAutomataApp:
             self.set_current_seed_tooltip()
 
         if event.ui_element == self.rules_state_button:
-            # load rule state
-            pass
+            rule_string = self.cell_grid.rule.__name__
+            rule_state_path = f"grid_states/rule_defaults/{rule_string}.state"
+            self.load_state(rule_state_path)
 
         if event.ui_element == self.save_state_button:
             self.create_file_dialog(False)
