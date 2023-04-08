@@ -347,7 +347,8 @@ class CellularAutomataApp:
 
     def process_mouseclick(self, event: pygame.event.Event) -> None:
         pos = pygame.mouse.get_pos()
-        self.cell_grid.click(pos, self.grid_padding)
+        if not self.file_dialog and not self.overwrite_dialog:
+            self.cell_grid.click(pos, self.grid_padding)
 
     def process_keypress(self, event: pygame.event.Event) -> None:
         if event.key == pygame.K_SPACE:
