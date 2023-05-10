@@ -1,5 +1,4 @@
 from math import cos, sin
-from typing import Any
 
 
 class Painter:
