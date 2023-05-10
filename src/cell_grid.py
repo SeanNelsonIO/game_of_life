@@ -7,6 +7,7 @@ from src.cellular_automata import CellularAutomata
 from math import cos, sin
 
 from src.painter import Painter
+from src.shape_tool import ShapeTool
 
 
 class CellGrid:
@@ -37,6 +38,9 @@ class CellGrid:
 
         # Setup Painter object
         self.set_painter()
+
+        # Setup ShapeTool object
+        self.set_shape_tool()
 
         # Setup grid colours
         self.bg_colour = colours.BLACK
@@ -87,6 +91,9 @@ class CellGrid:
     def set_painter(self) -> None:
         self.painter = Painter(self)
 
+    def set_shape_tool(self) -> None:
+        self.shape_tool = ShapeTool(self)
+
     def click(self, pos, padding) -> None:
         col = (pos[0] - padding[0]) // (self.cell_width + self.cell_margin)
         row = (pos[1] - padding[1]) // (self.cell_height + self.cell_margin)
@@ -100,11 +107,17 @@ class CellGrid:
         # self.draw_circle(pos, padding)
         print(f"Mouse down: {pos} at Grid: {row},{col}")
 
+    # Drawing functions start
     def paint(self, previous_pos, current_pos, padding, brush_size) -> None:
         self.painter(previous_pos, current_pos, padding, brush_size)
 
     def erase(self, previous_pos, current_pos, padding, brush_size) -> None:
         self.painter(previous_pos, current_pos, padding, brush_size, erase=True)
+
+    def stamp_shape(self, current_pos, padding, shape) -> None:
+        self.shape_tool(current_pos, padding, shape)
+
+    # Drawing functions end
 
     def is_position_in_grid(self, row, col) -> bool:
         row_in_bounds = self.height > row >= 0

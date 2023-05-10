@@ -420,9 +420,17 @@ class CellularAutomataApp:
     def process_mouseclick(self) -> None:
         pos = pygame.mouse.get_pos()
         if self.active_utility == "paint":
-            self.cell_grid.paint(
-                self.previous_mouse_pos, pos, self.grid_padding, self.brush_size
-            )
+            # self.cell_grid.paint(
+            #     self.previous_mouse_pos, pos, self.grid_padding, self.brush_size
+            # )
+            # TEST
+            shape = [
+                [0, 0, 0],
+                [0, 1, 1],
+                [0, 1, 1],
+            ]
+            self.cell_grid.stamp_shape(pos, self.grid_padding, shape)
+            # TEST
         elif self.active_utility == "erase":
             self.cell_grid.erase(
                 self.previous_mouse_pos, pos, self.grid_padding, self.brush_size
