@@ -56,7 +56,6 @@ class CellularAutomataApp:
         self.save_state_button = None
         self.load_state_button = None
 
-
         self.fps = 60
 
         # Utilities Panel
@@ -230,8 +229,8 @@ class CellularAutomataApp:
 
         self.brush_size_slider = UIHorizontalSlider(
             panel_item_rect,
-            1,
-            (1, 10),
+            1,  # Default size is 1 cell
+            (1, 10),  # Min size is 1 cell, max size is 10 cells
             manager=self.ui_manager,
             container=self.utilities_panel,
             anchors={"top_target": self.brush_size_label},
@@ -248,7 +247,7 @@ class CellularAutomataApp:
             manager=self.ui_manager,
             container=self.utilities_panel,
             object_id="#paint_button",
-            anchors={"top_target": self.brush_size_slider}
+            anchors={"top_target": self.brush_size_slider},
         )
 
         self.eraser_button = UIButton(
@@ -262,7 +261,7 @@ class CellularAutomataApp:
             manager=self.ui_manager,
             container=self.utilities_panel,
             object_id="#eraser_button",
-            anchors={"top_target": self.brush_size_slider}
+            anchors={"top_target": self.brush_size_slider},
         )
 
     def set_current_seed_tooltip(self) -> None:
@@ -315,9 +314,13 @@ class CellularAutomataApp:
     def process_mouseclick(self) -> None:
         pos = pygame.mouse.get_pos()
         if self.active_utility == "paint":
-            self.cell_grid.paint(self.previous_mouse_pos, pos, self.grid_padding)
+            self.cell_grid.paint(
+                self.previous_mouse_pos, pos, self.grid_padding, self.brush_size
+            )
         elif self.active_utility == "erase":
-            self.cell_grid.erase(self.previous_mouse_pos, pos, self.grid_padding)
+            self.cell_grid.erase(
+                self.previous_mouse_pos, pos, self.grid_padding, self.brush_size
+            )
         else:
             self.cell_grid.click(pos, self.grid_padding)
 
@@ -361,7 +364,6 @@ class CellularAutomataApp:
                 # self.paint_button.set_background_color((0, 255, 0))
                 self.active_utility = "paint"
             # self.paint_button.set_background_color((255, 0, 0))
-            
 
         if event.ui_element == self.eraser_button:
             if self.active_utility == "erase":
@@ -371,7 +373,6 @@ class CellularAutomataApp:
                 self.active_utility = "erase"
             # self.eraser_button.set_background_color((255, 0, 0))
 
-        
     def process_text_entry(self, event):
         pass
 
@@ -388,7 +389,7 @@ class CellularAutomataApp:
                 if event.type != pygame_gui.UI_BUTTON_PRESSED:
                     if self.active_utility is not None:
                         self.drawing = True
-                    else: 
+                    else:
                         self.process_mouseclick()
             if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
                 if event.type != pygame_gui.UI_BUTTON_PRESSED:
@@ -406,7 +407,6 @@ class CellularAutomataApp:
             if self.brush_size_slider.has_moved_recently:
                 self.brush_size = self.brush_size_slider.get_current_value()
                 self.brush_size_label.set_text(f"Brush Size: {self.brush_size} Cell(s)")
-            
 
         if self.drawing:
             self.process_mouseclick()
