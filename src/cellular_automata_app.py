@@ -97,7 +97,7 @@ class CellularAutomataApp:
         self.create_seed_panel(default_panel_item_rect)
         self.create_rules_panel(default_panel_item_rect)
 
-        self.create_state_panel(default_panel_item_rect)
+        # self.create_state_panel(default_panel_item_rect)
         self.create_utilities_panel(default_panel_item_rect)
 
     def create_control_panel(self, panel_item_rect: pygame.Rect) -> None:
@@ -462,6 +462,18 @@ class CellularAutomataApp:
             self.cell_grid.set_seed(None)
             self.set_current_seed_tooltip()
 
+        if event.ui_element == self.paint_button:
+            if self.active_utility == "paint":
+                self.active_utility = None
+            else:
+                self.active_utility = "paint"
+
+        if event.ui_element == self.eraser_button:
+            if self.active_utility == "erase":
+                self.active_utility = None
+            else:
+                self.active_utility = "erase"
+
         if event.ui_element == self.rules_state_button:
             rule_string = self.cell_grid.rule.__name__
             rule_state_path = f"grid_states/rule_defaults/{rule_string}.state"
@@ -499,24 +511,6 @@ class CellularAutomataApp:
 
     def process_confirmation_dialog_confirmed(self, event: pygame.event.Event):
         self.cell_grid.ca.save_grid_to_file(self.overwrite_dialog.overwrite_path)
-        if event.ui_element == self.paint_button:
-            if self.active_utility == "paint":
-                self.active_utility = None
-            else:
-                # self.paint_button.set_background_color((0, 255, 0))
-                self.active_utility = "paint"
-            # self.paint_button.set_background_color((255, 0, 0))
-
-        if event.ui_element == self.eraser_button:
-            if self.active_utility == "erase":
-                self.active_utility = None
-                # self.eraser_button.set_background_color((0, 255, 0))
-            else:
-                self.active_utility = "erase"
-            # self.eraser_button.set_background_color((255, 0, 0))
-
-    def process_text_entry(self, event):
-        pass
 
     def process_events(self) -> None:
         for event in pygame.event.get():
