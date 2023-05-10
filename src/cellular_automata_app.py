@@ -63,6 +63,20 @@ class CellularAutomataApp:
         self.file_dialog = None
         self.overwrite_dialog = None
 
+        self.fps = 60
+
+        # Utilities Panel
+        self.utilities_panel = None
+        self.brush_size_label = None
+        self.brush_size_slider = None
+        self.brush_size = None
+        self.paint_button = None
+        self.eraser_button = None
+
+        self.active_utility = None
+        self.drawing = False
+        self.previous_mouse_pos = None
+
         self.create_ui()
 
         self.clock = pygame.time.Clock()
@@ -82,7 +96,9 @@ class CellularAutomataApp:
         self.create_control_panel(default_panel_item_rect)
         self.create_seed_panel(default_panel_item_rect)
         self.create_rules_panel(default_panel_item_rect)
-        # self.create_state_panel(default_panel_item_rect)
+
+        self.create_state_panel(default_panel_item_rect)
+        self.create_utilities_panel(default_panel_item_rect)
 
     def create_control_panel(self, panel_item_rect: pygame.Rect) -> None:
         self.control_panel = UIPanel(
@@ -241,6 +257,58 @@ class CellularAutomataApp:
             anchors={"top_target": self.save_state_button},
         )
 
+    def create_utilities_panel(self, panel_item_rect: pygame.Rect) -> None:
+        self.utilities_panel = UIPanel(
+            pygame.Rect(48, 16, 200, 196),
+            starting_layer_height=4,
+            manager=self.ui_manager,
+            anchors={"top_target": self.rules_panel},
+        )
+
+        self.brush_size_label = UILabel(
+            panel_item_rect,
+            "Brush Size: 1 Cell(s)",
+            manager=self.ui_manager,
+            container=self.utilities_panel,
+        )
+
+        self.brush_size_slider = UIHorizontalSlider(
+            panel_item_rect,
+            1,  # Default size is 1 cell
+            (1, 10),  # Min size is 1 cell, max size is 10 cells
+            manager=self.ui_manager,
+            container=self.utilities_panel,
+            anchors={"top_target": self.brush_size_label},
+        )
+
+        self.paint_button = UIButton(
+            pygame.Rect(
+                panel_item_rect.x,
+                panel_item_rect.y * 2,
+                83,
+                panel_item_rect.height,
+            ),
+            "Paint",
+            manager=self.ui_manager,
+            container=self.utilities_panel,
+            object_id="#paint_button",
+            anchors={"top_target": self.brush_size_slider},
+        )
+
+        self.eraser_button = UIButton(
+            pygame.Rect(
+                101,
+                panel_item_rect.y * 2,
+                83,
+                panel_item_rect.height,
+            ),
+            "Erase",
+            manager=self.ui_manager,
+            container=self.utilities_panel,
+            object_id="#eraser_button",
+            anchors={"top_target": self.brush_size_slider},
+        )
+
     def set_current_seed_tooltip(self) -> None:
         if not self.cell_grid.seed:
             seed = "No Seed Used"
@@ -288,6 +356,9 @@ class CellularAutomataApp:
 
         if rule:
             self.cell_grid.set_rule(rule)
+
+    def set_utility(self, utility: str) -> None:
+        self.active_utility = utility
 
     def pause(self) -> None:
         if self.is_paused:
@@ -346,10 +417,20 @@ class CellularAutomataApp:
         )
         self.file_dialog.load = load
 
-    def process_mouseclick(self, event: pygame.event.Event) -> None:
+    def process_mouseclick(self) -> None:
         pos = pygame.mouse.get_pos()
-        if not self.file_dialog and not self.overwrite_dialog:
+        if self.active_utility == "paint":
+            self.cell_grid.paint(
+                self.previous_mouse_pos, pos, self.grid_padding, self.brush_size
+            )
+        elif self.active_utility == "erase":
+            self.cell_grid.erase(
+                self.previous_mouse_pos, pos, self.grid_padding, self.brush_size
+            )
+        else:
             self.cell_grid.click(pos, self.grid_padding)
+
+        self.previous_mouse_pos = pos
 
     def process_keypress(self, event: pygame.event.Event) -> None:
         if event.key == pygame.K_SPACE:
@@ -418,6 +499,24 @@ class CellularAutomataApp:
 
     def process_confirmation_dialog_confirmed(self, event: pygame.event.Event):
         self.cell_grid.ca.save_grid_to_file(self.overwrite_dialog.overwrite_path)
+        if event.ui_element == self.paint_button:
+            if self.active_utility == "paint":
+                self.active_utility = None
+            else:
+                # self.paint_button.set_background_color((0, 255, 0))
+                self.active_utility = "paint"
+            # self.paint_button.set_background_color((255, 0, 0))
+
+        if event.ui_element == self.eraser_button:
+            if self.active_utility == "erase":
+                self.active_utility = None
+                # self.eraser_button.set_background_color((0, 255, 0))
+            else:
+                self.active_utility = "erase"
+            # self.eraser_button.set_background_color((255, 0, 0))
+
+    def process_text_entry(self, event):
+        pass
 
     def process_events(self) -> None:
         for event in pygame.event.get():
@@ -428,8 +527,16 @@ class CellularAutomataApp:
 
             if event.type == pygame.KEYDOWN:
                 self.process_keypress(event)
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                self.process_mouseclick(event)
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                if event.type != pygame_gui.UI_BUTTON_PRESSED:
+                    if self.active_utility is not None:
+                        self.drawing = True
+                    else:
+                        self.process_mouseclick()
+            if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
+                if event.type != pygame_gui.UI_BUTTON_PRESSED:
+                    self.drawing = False
+                    self.previous_mouse_pos = None
             if event.type == pygame_gui.UI_BUTTON_PRESSED:
                 self.process_button_press(event)
             if event.type == pygame_gui.UI_DROP_DOWN_MENU_CHANGED:
@@ -444,6 +551,13 @@ class CellularAutomataApp:
             if self.speed_slider.has_moved_recently:
                 self.fps = self.speed_slider.get_current_value()
                 self.spped_slider_label.set_text(f"Speed: {self.fps} Iterations/s")
+
+            if self.brush_size_slider.has_moved_recently:
+                self.brush_size = self.brush_size_slider.get_current_value()
+                self.brush_size_label.set_text(f"Brush Size: {self.brush_size} Cell(s)")
+
+        if self.drawing:
+            self.process_mouseclick()
 
         if not self.is_paused:
             self.cell_grid.update()
