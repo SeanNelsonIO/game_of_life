@@ -4,7 +4,6 @@ import pygame
 
 from src import colours
 from src.cellular_automata import CellularAutomata
-from math import cos, sin
 
 from src.painter import Painter
 
@@ -104,17 +103,20 @@ class CellGrid:
         grid_dimensions: tuple[int, int],
     ) -> None:
         """
-        Initializes the CellGrid object with the given rule, visible_dimensions, and grid_dimensions.
+        Initializes the CellGrid object with the given rule, visible_dimensions,
+        and grid_dimensions.
 
         Parameters
         ----------
         rule : Callable
             The rule to update the state of the cellular automata.
         visible_dimensions : tuple[int, int]
-            The dimensions of the visible grid, i.e., the part of the grid displayed on screen.
+            The dimensions of the visible grid, i.e., the
+            part of the grid displayed on screen.
             Format: (height, width).
         grid_dimensions : tuple[int, int]
-            The dimensions of the actual grid. This can be larger than visible_dimensions.
+            The dimensions of the actual grid.
+            This can be larger than visible_dimensions.
             Format: (height, width).
 
         Attributes Initialized
@@ -224,7 +226,8 @@ class CellGrid:
             The dimensions of the visible grid.
             Format: (height, width).
         grid_dimensions : tuple[int, int]
-            The dimensions of the actual grid. This can be larger than visible_dimensions.
+            The dimensions of the actual grid.
+            This can be larger than visible_dimensions.
             Format: (height, width).
         """
         self.height = visible_dimensions[0]
@@ -237,8 +240,9 @@ class CellGrid:
         """
         Set the size of the window displaying the grid.
 
-        This method calculates the size of the grid surface and the visible surface based on the
-        grid dimensions and cell dimensions, and then sets the window size.
+        This method calculates the size of the grid surface and the
+        visible surface based on thegrid dimensions and cell dimensions,
+        and then sets the window size.
         """
         grid_window_height = (
             (self.height * self.cell_height)
@@ -282,7 +286,8 @@ class CellGrid:
         """
         Increase the zoom level of the grid.
 
-        This method calls set_zoom() with False to indicate that the zoom level should be increased.
+        This method calls set_zoom() with False to indicate that
+        the zoom level should be increased.
         """
         self.set_zoom(False)
 
@@ -290,7 +295,8 @@ class CellGrid:
         """
         Decrease the zoom level of the grid.
 
-        This method calls set_zoom() with True to indicate that the zoom level should be decreased.
+        This method calls set_zoom() with True to indicate that
+        the zoom level should be decreased.
         """
         self.set_zoom(True)
 
@@ -301,8 +307,9 @@ class CellGrid:
         Parameters
         ----------
         out : bool, optional
-            Determines the direction of the zoom. If True, the grid will be zoomed out.
-            If False, the grid will be zoomed in. If None, the zoom level remains unchanged.
+            Determines the direction of the zoom. If True, the grid will
+            be zoomed out. If False, the grid will be zoomed in.
+            If None, the zoom level remains unchanged.
         """
         prev_zoom = self.zoom
 
@@ -470,7 +477,8 @@ class CellGrid:
         Parameters
         ----------
         surface : pygame.Surface, optional
-            The surface onto which the grid is drawn. If None, the grid's surface is used.
+            The surface onto which the grid is drawn.
+            If None, the grid's surface is used.
         """
         if not surface:
             surface = self.grid_surface
@@ -539,9 +547,7 @@ class CellGrid:
             )
         )
         print(f"Grid Dimensions: {self.grid_width} x {self.grid_height}")
-        print(
-            f"Grid Size: {self.grid_surface.get_width()} x {self.grid_surface.get_height()}"
-        )
+        print(f"Grid Size: {self.grid_surface.get_size()}")
         print(f"Grid Window Size: {self.window_size}")
         print(f"Grid Background Colour: {self.bg_colour}")
         print(f"Empty Space Colour: {self.empty_space_colour}")
