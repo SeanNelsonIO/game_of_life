@@ -1,4 +1,21 @@
 def game_of_life_rule(grid: list[list[int]], i: int, j: int):
+    """
+    Apply the Game of Life rule to a cell in a given grid.
+
+    Parameters
+    ----------
+    grid : list[list[int]]
+        The grid of cells.
+    i : int
+        The row index of the cell.
+    j : int
+        The column index of the cell.
+
+    Returns
+    -------
+    int
+        The new state of the cell (0 for dead, 1 for alive) based on the Game of Life rule.
+    """
     neighbours = 0
     # count number of neighbours
     for x in range(-1, 2):
@@ -22,6 +39,23 @@ def game_of_life_rule(grid: list[list[int]], i: int, j: int):
 
 
 def rule_30(grid: list[list[int]], i: int, j: int):
+    """
+    Apply Rule 30 to a cell in a given grid.
+
+    Parameters
+    ----------
+    grid : list[list[int]]
+        The grid of cells.
+    i : int
+        The row index of the cell.
+    j : int
+        The column index of the cell.
+
+    Returns
+    -------
+    int
+        The new state of the cell (0 for dead, 1 for alive) based on Rule 30.
+    """
     neighbours = 0
     # count number of neighbours
     for x in range(-1, 2):
@@ -43,6 +77,23 @@ def rule_30(grid: list[list[int]], i: int, j: int):
 
 
 def rule_90(grid: list[list[int]], i: int, j: int):
+    """
+    Apply Rule 90 to a cell in a given grid.
+
+    Parameters
+    ----------
+    grid : list[list[int]]
+        The grid of cells.
+    i : int
+        The row index of the cell.
+    j : int
+        The column index of the cell.
+
+    Returns
+    -------
+    int
+        The new state of the cell (0 for dead, 1 for alive) based on Rule 90.
+    """
     neighbours = 0
     # count number of neighbours
     for x in range(-1, 2):
@@ -64,6 +115,23 @@ def rule_90(grid: list[list[int]], i: int, j: int):
 
 
 def rule_110(grid: list[list[int]], i: int, j: int):
+    """
+    Apply Rule 110 to a cell in a given grid.
+
+    Parameters
+    ----------
+    grid : list[list[int]]
+        The grid of cells.
+    i : int
+        The row index of the cell.
+    j : int
+        The column index of the cell.
+
+    Returns
+    -------
+    int
+        The new state of the cell (0 for dead, 1 for alive) based on Rule 110.
+    """
     neighbours = 0
     # count number of neighbours
     for x in range(-1, 2):
@@ -85,6 +153,23 @@ def rule_110(grid: list[list[int]], i: int, j: int):
 
 
 def rule_184(grid: list[list[int]], i: int, j: int):
+    """
+    Apply Rule 184 to a cell in a given grid.
+
+    Parameters
+    ----------
+    grid : list[list[int]]
+        The grid of cells.
+    i : int
+        The row index of the cell.
+    j : int
+        The column index of the cell.
+
+    Returns
+    -------
+    int
+        The new state of the cell (0 for dead, 1 for alive) based on Rule 184.
+    """
     neighbours = 0
     # count number of neighbours
     for x in range(-1, 2):

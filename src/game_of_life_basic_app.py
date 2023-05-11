@@ -31,6 +31,13 @@ pygame.display.set_caption("Game of Life")
 
 
 def run_game_loop(ca) -> None:
+    """
+    Run the main game loop for the cellular automata simulation.
+
+    Args:
+        ca (CellularAutomata): The cellular automata instance to be simulated.
+
+    """
     game_loop = True
 
     clock = pygame.time.Clock()
