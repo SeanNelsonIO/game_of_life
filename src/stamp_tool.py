@@ -1,4 +1,5 @@
 # from src.shapes.gospel_glider_gun import gun
+import json
 
 gun = [
     [
@@ -765,18 +766,22 @@ gun = [
 
 
 class StampTool:
-    shapes = {
-        "Block": [[1, 1], [1, 1]],
-        "Beehive": [[0, 1, 1, 0], [1, 0, 0, 1], [0, 1, 1, 0]],
-        "Blinker": [[1, 1, 1]],
-        "Glider": [[1, 0, 0], [0, 1, 1], [1, 1, 0]],
-        "Gun": gun,
-    }
-
     def __init__(self, cell_grid) -> None:
         self.cell_grid = cell_grid
+        # default shapes
+        self.shapes = {
+            "Block": [[1, 1], [1, 1]],
+            "Beehive": [[0, 1, 1, 0], [1, 0, 0, 1], [0, 1, 1, 0]],
+            "Blinker": [[1, 1, 1]],
+            "Glider": [[1, 0, 0], [0, 1, 1], [1, 1, 0]],
+            "Beacon": [[1, 1, 0, 0], [1, 1, 0, 0], [0, 0, 1, 1], [0, 0, 1, 1]],
+        }
 
-    def __call__(self, current_pos, padding, shape: list[list[int]]) -> None:
+        # load shapes from json files
+        self.load_shape("Gun.json")
+        self.load_shape("Bomb.json")
+
+    def __call__(self, current_pos, padding, shape: str) -> None:
         self.stamp_shape(current_pos, padding, shape)
 
     def stamp_shape(self, pos, padding, shape: str) -> None:
@@ -793,3 +798,16 @@ class StampTool:
 
                 if self.cell_grid.is_position_in_grid(row_index, col_index):
                     self.cell_grid.ca.grid[row_index][col_index] = cell
+
+    def load_shape(self, shape_file_name: str) -> None:
+        with open("src/shapes/" + shape_file_name, "r") as shape_file:
+            shape = json.load(shape_file)
+
+        # add shape to list of shapes
+        self.shapes[shape["name"]] = shape["shape"]
+
+    def export_shape(self, shape_name: str, shape: list[list[int]]) -> None:
+        shape_dict = {"name": shape_name, "shape": shape}
+
+        with open("src/shapes/" + shape_name + ".json", "w") as shape_file:
+            json.dump(shape_dict, shape_file, indent=4)

@@ -273,6 +273,8 @@ class CellularAutomataApp:
                 "Blinker",
                 "Glider",
                 "Gun",
+                "Beacon",
+                "Bomb",
             ],
             "Circle",
             panel_item_rect,
