@@ -23,6 +23,7 @@ class CellGrid:
         self.height = None
         self.window_size = None
         self.surface = None
+        self.zoom = 1.0
 
         # Setup cell dimension defaults
         self.set_cell_dimensions(5, 5, 1)
@@ -61,8 +62,11 @@ class CellGrid:
             + (self.width * self.cell_margin)
             + self.cell_margin
         )
+        self.zoom_size = (int(self.grid_window_width/self.zoom), int(self.self.grid_window_height/self.zoom))
+        zoom_area = pygame.Rect(0, 0, *self.zoom_size)
+        zoom_area.center = (int(self.grid_window_width/2), (int(self.grid_window_height/2)))
 
-        self.surface = pygame.Surface((grid_window_width, grid_window_height))
+        self.surface = pygame.Surface(zoom_area.size)
         self.window_size = (grid_window_width, grid_window_height)
 
     def set_seed(self, seed: int | list[int] | None) -> None:

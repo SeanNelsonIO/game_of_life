@@ -29,6 +29,8 @@ class CellularAutomataApp:
         # Setup UI elements
         self.window_size = (1000, 800)
         self.window_surface = pygame.display.set_mode(self.window_size)
+        self.zoom_size = (int(self.window_size[0]/self.zoom), int(self.window_size[1]/self.zoom))
+
         self.ui_manager = UIManager(self.window_size, "data/themes/theme.json")
 
         self.ui_manager.preload_fonts(
@@ -255,18 +257,14 @@ class CellularAutomataApp:
     def set_grid_seed(self) -> None:
         seed = None
         seed_text = self.seed_text_entry.get_text().strip()
-        # print(f"Seed Text: {seed_text}")
-        # print(f"Seed Type: {type(seed_text)}")
 
         try:
             raw_seed = ast.literal_eval(seed_text)
-            # print(f"Raw Seed Type: {type(raw_seed)}")
             if isinstance(raw_seed, int):
                 seed = raw_seed
             elif isinstance(raw_seed, list):
                 seed = [int(s) for s in raw_seed]
         except Exception:
-            # print("Cannot Decipher Seed")
             pass
 
         if seed is not None:
@@ -460,8 +458,8 @@ class CellularAutomataApp:
 
             # draw grid on window
             self.cell_grid.draw()
-            self.window_surface.blit(self.cell_grid.surface, self.grid_padding)
 
+            self.window_surface.blit(self.cell_grid.surface, self.grid_padding)
             self.ui_manager.draw_ui(self.window_surface)
 
             pygame.display.update()
