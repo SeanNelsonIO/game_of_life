@@ -27,9 +27,9 @@ class CellularAutomataApp:
         pygame.display.set_caption("Cellular Automata App")
 
         # Setup UI elements
-        self.window_size = (1000, 800)
+        self.window_size = (1400, 1000)
         self.window_surface = pygame.display.set_mode(self.window_size)
-        self.zoom_size = (int(self.window_size[0]/self.zoom), int(self.window_size[1]/self.zoom))
+        # self.zoom_size = (int(self.window_size[0]/self.zoom), int(self.window_size[1]/self.zoom))
 
         self.ui_manager = UIManager(self.window_size, "data/themes/theme.json")
 
@@ -77,14 +77,13 @@ class CellularAutomataApp:
         # Setup Cellular Automata Grid with defaults
         default_rule = rules.game_of_life_rule
         self.grid_padding = (266, 50)
-        self.cell_grid = CellGrid(default_rule, (100, 100))
+        self.cell_grid = CellGrid(default_rule, (100, 100), (150, 150))
 
         default_panel_item_rect = pygame.Rect(10, 5, 175, 30)
 
         self.create_control_panel(default_panel_item_rect)
         self.create_seed_panel(default_panel_item_rect)
         self.create_rules_panel(default_panel_item_rect)
-        # self.create_state_panel(default_panel_item_rect)
 
     def create_control_panel(self, panel_item_rect: pygame.Rect) -> None:
         self.control_panel = UIPanel(
@@ -175,6 +174,7 @@ class CellularAutomataApp:
             object_id="#use_seed_button",
             anchors={"top_target": self.seed_text_entry},
         )
+        print(self.use_seed_button.get_object_ids())
 
         self.current_seed_button = UIButton(
             panel_item_rect,
@@ -346,7 +346,14 @@ class CellularAutomataApp:
 
     def process_mouseclick(self, event: pygame.event.Event) -> None:
         pos = pygame.mouse.get_pos()
-        if not self.file_dialog and not self.overwrite_dialog:
+        if self.file_dialog or self.overwrite_dialog:
+            return
+
+        if event.button == 4:  # scroll up
+            self.cell_grid.zoom_in()
+        elif event.button == 5:  # scroll down
+            self.cell_grid.zoom_out()
+        if event.button == 1:  # Mouse click
             self.cell_grid.click(pos, self.grid_padding)
 
     def process_keypress(self, event: pygame.event.Event) -> None:
@@ -459,7 +466,7 @@ class CellularAutomataApp:
             # draw grid on window
             self.cell_grid.draw()
 
-            self.window_surface.blit(self.cell_grid.surface, self.grid_padding)
+            self.window_surface.blit(self.cell_grid.visible_surface, self.grid_padding)
             self.ui_manager.draw_ui(self.window_surface)
 
             pygame.display.update()
