@@ -259,10 +259,25 @@ class CellularAutomataApp:
 
     def create_utilities_panel(self, panel_item_rect: pygame.Rect) -> None:
         self.utilities_panel = UIPanel(
-            pygame.Rect(48, 16, 200, 126),
+            pygame.Rect(48, 16, 200, 166),
             starting_layer_height=4,
             manager=self.ui_manager,
             anchors={"top_target": self.rules_panel},
+        )
+
+        self.brush_type_dropdown = UIDropDownMenu(
+            [
+                "Circle",
+                "Block",
+                "Beehive",
+                "Blinker",
+                "Glider",
+                "Gun",
+            ],
+            "Circle",
+            panel_item_rect,
+            manager=self.ui_manager,
+            container=self.utilities_panel,
         )
 
         self.brush_size_label = UILabel(
@@ -270,6 +285,7 @@ class CellularAutomataApp:
             "Brush Size: 1 Cell(s)",
             manager=self.ui_manager,
             container=self.utilities_panel,
+            anchors={"top_target": self.brush_type_dropdown},
         )
 
         self.brush_size_slider = UIHorizontalSlider(
@@ -435,12 +451,12 @@ class CellularAutomataApp:
         pos = pygame.mouse.get_pos()
         if self.active_utility == "Paint":
             self.cell_grid.paint(
-                self.previous_mouse_pos, pos, self.grid_padding, self.brush_size
+                self.previous_mouse_pos,
+                pos,
+                self.grid_padding,
+                self.brush_size,
+                shape=self.brush_type_dropdown.selected_option,
             )
-            # TEST
-            # shape = [[0, 1, 0], [1, 1, 1], [0, 1, 0]]
-            # self.cell_grid.stamp_shape(pos, self.grid_padding, shape)
-            # # TEST
         elif self.active_utility == "Erase":
             self.cell_grid.erase(
                 self.previous_mouse_pos, pos, self.grid_padding, self.brush_size

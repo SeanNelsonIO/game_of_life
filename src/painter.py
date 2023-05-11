@@ -1,24 +1,38 @@
 from math import cos, sin
+from src.stamp_tool import StampTool
 
 
 class Painter:
     def __init__(self, cell_grid) -> None:
         self.cell_grid = cell_grid
         self.fill_value = 1
+        self.stamp_tool = StampTool(self.cell_grid)
 
     def __call__(
-        self, previous_pos, current_pos, padding, brush_size, erase=False
+        self,
+        previous_pos,
+        current_pos,
+        padding,
+        brush_size,
+        erase=False,
+        shape="Circle",
     ) -> None:
         # padding = (self.cell_grid.pad_width, self.cell_grid.pad_height)
+
         if erase:
             self.fill_value = 0
         else:
             self.fill_value = 1
 
-        self.paint(previous_pos, current_pos, padding, brush_size)
+        self.paint(previous_pos, current_pos, padding, brush_size, shape)
 
-    def paint(self, previous_pos, current_pos, padding, brush_size) -> None:
+    def paint(self, previous_pos, current_pos, padding, brush_size, shape) -> None:
         if not previous_pos or not current_pos:
+            return
+
+        if shape != "Circle":
+            # Draw the shape at the current position
+            self.stamp_tool(current_pos, padding, shape)
             return
 
         # Draw the circle at the current position
@@ -38,14 +52,12 @@ class Painter:
         self.interpolate_cells(previous_pos, current_pos, padding, brush_size)
 
     def draw_circle(self, pos, padding, brush_size) -> None:
-        for angle in range(1, 360):
-            x1 = brush_size * cos(angle * 3.1415926535 / 180)
-            y1 = brush_size * sin(angle * 3.1415926535 / 180)
-
-            circumference_x = int(pos[0] + x1)
-            circumference_y = int(pos[1] + y1)
-
-            self.fill_cell((circumference_x, circumference_y), padding)
+        for i in range(-brush_size, brush_size + 1):
+            for j in range(-brush_size, brush_size + 1):
+                if i * i + j * j <= brush_size * brush_size:
+                    fill_x = int(pos[0] + i)
+                    fill_y = int(pos[1] + j)
+                    self.fill_cell((fill_x, fill_y), padding)
 
     def fill_cell(self, pos, padding):
         col = (pos[0] - padding[0]) // (
