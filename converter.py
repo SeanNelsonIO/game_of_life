@@ -1,3 +1,5 @@
+# file to convert 1 and 0s into arrays for stamps
+
 lines = [
     "00000010000000",
     "00000101000000",
