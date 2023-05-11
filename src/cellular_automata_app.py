@@ -259,7 +259,7 @@ class CellularAutomataApp:
 
     def create_utilities_panel(self, panel_item_rect: pygame.Rect) -> None:
         self.utilities_panel = UIPanel(
-            pygame.Rect(48, 16, 200, 196),
+            pygame.Rect(48, 16, 200, 126),
             starting_layer_height=4,
             manager=self.ui_manager,
             anchors={"top_target": self.rules_panel},
@@ -358,7 +358,21 @@ class CellularAutomataApp:
             self.cell_grid.set_rule(rule)
 
     def set_utility(self, utility: str) -> None:
-        self.active_utility = utility
+        if utility == "Paint" and self.active_utility != "Paint":
+            self.active_utility = utility
+            self.paint_button.select()
+            self.eraser_button.unselect()
+        elif utility == "Erase" and self.active_utility != "Erase":
+            self.active_utility = utility
+            self.paint_button.unselect()
+            self.eraser_button.select()
+        else:  # default to no active utility
+            self.active_utility = None
+            self.paint_button.unselect()
+            self.eraser_button.unselect()
+
+    def get_utility(self) -> str:
+        return self.active_utility
 
     def pause(self) -> None:
         if self.is_paused:
@@ -419,19 +433,15 @@ class CellularAutomataApp:
 
     def process_mouseclick(self) -> None:
         pos = pygame.mouse.get_pos()
-        if self.active_utility == "paint":
-            # self.cell_grid.paint(
-            #     self.previous_mouse_pos, pos, self.grid_padding, self.brush_size
-            # )
+        if self.active_utility == "Paint":
+            self.cell_grid.paint(
+                self.previous_mouse_pos, pos, self.grid_padding, self.brush_size
+            )
             # TEST
-            shape = [
-                [0, 0, 0],
-                [0, 1, 1],
-                [0, 1, 1],
-            ]
-            self.cell_grid.stamp_shape(pos, self.grid_padding, shape)
-            # TEST
-        elif self.active_utility == "erase":
+            # shape = [[0, 1, 0], [1, 1, 1], [0, 1, 0]]
+            # self.cell_grid.stamp_shape(pos, self.grid_padding, shape)
+            # # TEST
+        elif self.active_utility == "Erase":
             self.cell_grid.erase(
                 self.previous_mouse_pos, pos, self.grid_padding, self.brush_size
             )
@@ -471,16 +481,10 @@ class CellularAutomataApp:
             self.set_current_seed_tooltip()
 
         if event.ui_element == self.paint_button:
-            if self.active_utility == "paint":
-                self.active_utility = None
-            else:
-                self.active_utility = "paint"
+            self.set_utility("Paint")
 
         if event.ui_element == self.eraser_button:
-            if self.active_utility == "erase":
-                self.active_utility = None
-            else:
-                self.active_utility = "erase"
+            self.set_utility("Erase")
 
         if event.ui_element == self.rules_state_button:
             rule_string = self.cell_grid.rule.__name__

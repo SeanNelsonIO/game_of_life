@@ -30,5 +30,15 @@
             "border_width": "1",
             "shadow_width": "2"
         }
+    },
+    "#eraser_button": {
+        "colours": {
+            "selected_bg": "#004d00"
+        }
+    },
+    "#paint_button": {
+        "colours": {
+            "selected_bg": "#004d00"
+        }
     }
 }
