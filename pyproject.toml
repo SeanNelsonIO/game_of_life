@@ -16,3 +16,7 @@ pygame-gui = "^0.6.8"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+
+[tool.poetry.scripts]
+game-of-life = "game_of_life.main:run"

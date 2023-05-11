@@ -4,6 +4,9 @@ import pygame
 
 from src import colours
 from src.cellular_automata import CellularAutomata
+from math import cos, sin
+
+from src.painter import Painter
 
 
 class CellGrid:
@@ -45,6 +48,9 @@ class CellGrid:
         self.set_dimensions(visible_dimensions, grid_dimensions)
         self.set_window_size()
         self.set_ca()
+
+        # Setup Painter object
+        self.set_painter()
 
         # Setup grid colours
         self.bg_colour = colours.BLACK
@@ -131,7 +137,7 @@ class CellGrid:
             self.zoom_area = self.grid_surface.get_rect()
             self.zoom = prev_zoom
 
-        # print(self.zoom_area)
+        print(self.zoom_area)
         self.zoom_area.center = (
             int(self.grid_surface.get_width() / 2),
             int(self.grid_surface.get_height() / 2),
@@ -152,7 +158,10 @@ class CellGrid:
     def update(self) -> None:
         self.ca.update_grid()
 
-    def click(self, pos, padding):
+    def set_painter(self) -> None:
+        self.painter = Painter(self)
+
+    def click(self, pos, padding) -> None:
         col = (pos[0] - padding[0]) // (self.cell_width + self.cell_margin)
         row = (pos[1] - padding[1]) // (self.cell_height + self.cell_margin)
 
@@ -161,7 +170,18 @@ class CellGrid:
 
         # invert cell state
         self.ca.grid[row][col] = not self.ca.grid[row][col]
+
+        # self.draw_circle(pos, padding)
         print(f"Mouse down: {pos} at Grid: {row},{col}")
+
+    # Drawing functions start
+    def paint(self, previous_pos, current_pos, padding, brush_size, shape) -> None:
+        self.painter(previous_pos, current_pos, padding, brush_size, shape=shape)
+
+    def erase(self, previous_pos, current_pos, padding, brush_size) -> None:
+        self.painter(previous_pos, current_pos, padding, brush_size, erase=True)
+
+    # Drawing functions end
 
     def is_position_in_grid(self, row, col) -> bool:
         row_in_bounds = self.grid_height > row >= 0
