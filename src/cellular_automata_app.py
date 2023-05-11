@@ -86,6 +86,15 @@ class CellularAutomataApp:
         self.is_paused = True
 
     def create_ui(self) -> None:
+        """
+        This function clears and resets the user interface manager, then initialises the cellular automata grid with default settings.
+        Following this, it creates several panels, including the control panel, seed panel, rules panel, and utilities panel.
+
+        Note
+        ----
+        This function relies on other functions to create individual panels:
+        `create_control_panel`, `create_seed_panel`, `create_rules_panel`, and `create_utilities_panel`.
+        """
         self.ui_manager.clear_and_reset()
 
         # Setup Cellular Automata Grid with defaults
@@ -101,6 +110,10 @@ class CellularAutomataApp:
         self.create_utilities_panel(default_panel_item_rect)
 
     def create_control_panel(self, panel_item_rect: pygame.Rect) -> None:
+        """
+        This method creates the control panel of the user interface. This panel contains a slider to adjust the speed of iterations,
+        a button to pause or play the cellular automata simulation, and a button to manually advance to the next state of the simulation.
+        """
         self.control_panel = UIPanel(
             pygame.Rect(48, 48, 200, 126),
             starting_layer_height=4,
@@ -152,6 +165,11 @@ class CellularAutomataApp:
         )
 
     def create_seed_panel(self, panel_item_rect: pygame.Rect) -> None:
+        """
+        This method creates the seed panel of the user interface. The seed panel contains options for generating a random seed,
+        entering a specific seed, using the entered seed, viewing the current seed, and clearing the grid.
+        These controls allow the user to influence the initial state of the cellular automata simulation.
+        """
         self.seed_panel = UIPanel(
             pygame.Rect(48, 16, 200, 196),
             starting_layer_height=4,
@@ -211,6 +229,12 @@ class CellularAutomataApp:
         )
 
     def create_rules_panel(self, panel_item_rect: pygame.Rect) -> None:
+        """
+        This method creates the rules panel of the user interface. The rules panel allows the user to select
+        the rule set for the cellular automata simulation from a dropdown menu. It also provides options for
+        loading a rule state, saving the grid state, and loading the grid state. These options allow the user
+        to have greater control over the behavior of the simulation.
+        """
         self.rules_panel = UIPanel(
             pygame.Rect(48, 16, 200, 191),
             starting_layer_height=4,
@@ -259,6 +283,12 @@ class CellularAutomataApp:
         )
 
     def create_utilities_panel(self, panel_item_rect: pygame.Rect) -> None:
+        """
+        This method creates the utilities panel of the user interface. The utilities panel provides the user
+        with several tools for directly interacting with the cellular automata grid. These tools include
+        different brush types and sizes for painting on the grid, as well as options for painting and erasing.
+        This allows the user to manually create and modify patterns on the grid.
+        """
         self.utilities_panel = UIPanel(
             pygame.Rect(48, 16, 200, 166),
             starting_layer_height=4,
@@ -329,6 +359,10 @@ class CellularAutomataApp:
         )
 
     def set_current_seed_tooltip(self) -> None:
+        """
+        This method sets the tooltip text for the current seed button in the seed panel.
+        The tooltip displays the current seed used for the cellular automata grid.
+        """
         if not self.cell_grid.seed:
             seed = "No Seed Used"
         else:
@@ -340,6 +374,9 @@ class CellularAutomataApp:
         self.current_seed_button.tool_tip_text = tooltip_text
 
     def set_grid_seed(self) -> None:
+        """
+        This method sets the seed for the cellular automata grid.
+        """
         seed = None
         seed_text = self.seed_text_entry.get_text().strip()
 
@@ -357,6 +394,16 @@ class CellularAutomataApp:
             self.set_current_seed_tooltip()
 
     def set_cell_rule(self, rule_string: str) -> None:
+        """
+        This method sets the rule for the cellular automata grid based on the provided rule string.
+
+        Parameters
+        ----------
+        rule_string : str
+            The name of the rule to be set for the cellular automata grid. The rule names correspond
+            to predefined rule sets, including "Game of Life", "Rule 30", "Rule 90", "Rule 110",
+            and "Rule 184".
+        """
         rule = None
         if rule_string == "Game of Life":
             rule = rules.game_of_life_rule
@@ -373,6 +420,15 @@ class CellularAutomataApp:
             self.cell_grid.set_rule(rule)
 
     def set_utility(self, utility: str) -> None:
+        """
+        This method sets the active utility for the application to the provided utility string.
+
+        Parameters
+        ----------
+        utility : str
+            The utility to set as the active utility. The utility should be either "Paint" or "Erase".
+            If None is provided, then the active utility is set to fill one cell.
+        """
         if utility == "Paint" and self.active_utility != "Paint":
             self.active_utility = utility
             self.paint_button.select()
@@ -387,9 +443,21 @@ class CellularAutomataApp:
             self.eraser_button.unselect()
 
     def get_utility(self) -> str:
+        """
+        This method returns the currently active utility of the application.
+
+        Returns
+        -------
+        str
+            The currently active utility. This can be either "Paint", "Erase" or None.
+        """
         return self.active_utility
 
     def pause(self) -> None:
+        """
+        This method toggles the pause state of the application. If the application is currently
+        paused, it will be unpaused and vice versa.
+        """
         if self.is_paused:
             self.pause_button.set_text("Pause")
             self.is_paused = False
@@ -398,10 +466,21 @@ class CellularAutomataApp:
             self.is_paused = True
 
     def next(self) -> None:
+        """
+        This method updates the cell grid once if the application is currently paused.
+        """
         if self.is_paused:
             self.cell_grid.update()
 
     def save_state(self, path: str) -> None:
+        """
+        This method saves the current state of the cellular automata grid to a file.
+
+        Parameters
+        ----------
+        path : str
+            The file path to save the grid state to.
+        """
         if os.path.isfile(path):
             dialog_text = (
                 f"The specified file at path: <b>{path}</b> "
@@ -425,11 +504,27 @@ class CellularAutomataApp:
         self.cell_grid.ca.save_grid_to_file(path)
 
     def load_state(self, path: str) -> None:
+        """
+        This method loads a previously saved state of the cellular automata grid from a file.
+
+        Parameters
+        ----------
+        path : str
+            The file path to load the grid state from.
+        """
         self.cell_grid.ca.populate_grid_with_state_file(path)
         if self.cell_grid.ca.seed:
             self.seed_text_entry.set_text(str(self.cell_grid.ca.seed))
 
     def create_file_dialog(self, load: bool) -> None:
+        """
+        This method creates a file dialog for loading or saving grid states.
+
+        Parameters
+        ----------
+        load : bool
+            If True, the file dialog is for loading grid states. If False, the file dialog is for saving grid states.
+        """
         if load:
             title = "Load Grid State"
         else:
@@ -447,6 +542,10 @@ class CellularAutomataApp:
         self.file_dialog.load = load
 
     def process_mouseclick(self) -> None:
+        """
+        This method handles mouse click events. Depending on the currently active utility, it will paint or erase cells
+        in the cell grid or fill cells directly.
+        """
         pos = pygame.mouse.get_pos()
         if self.file_dialog or self.overwrite_dialog:
             return
@@ -469,12 +568,30 @@ class CellularAutomataApp:
         self.previous_mouse_pos = pos
 
     def process_mousewheel(self, event) -> None:
+        """
+        This method handles mouse wheel events. It will zoom in or out of the cell grid depending on the direction of
+        the scroll.
+
+        Parameters
+        ----------
+        event : pygame.event.Event
+            The pygame event object for the mouse wheel event.
+        """
         if event.button == 4:  # scroll up
             self.cell_grid.zoom_in()
         elif event.button == 5:  # scroll down
             self.cell_grid.zoom_out()
 
     def process_keypress(self, event: pygame.event.Event) -> None:
+        """
+        This method handles key press events. It supports pausing/unpausing the application, stepping through the
+        simulation, and toggling debug mode.
+
+        Parameters
+        ----------
+        event : pygame.event.Event
+            The pygame event object for the key press event.
+        """
         if event.key == pygame.K_SPACE:
             self.pause()
         if event.key == pygame.K_RETURN:
@@ -484,6 +601,14 @@ class CellularAutomataApp:
             self.ui_manager.set_visual_debug_mode(self.debug_mode)
 
     def process_button_press(self, event: pygame.event.Event) -> None:
+        """
+        This method handles button press events for various UI elements in the application.
+
+        Parameters
+        ----------
+        event : pygame.event.Event
+            The pygame event object for the button press event.
+        """
         if event.ui_element == self.pause_button:
             self.pause()
         if event.ui_element == self.next_button:
@@ -525,10 +650,26 @@ class CellularAutomataApp:
             self.load_state_button.disable()
 
     def process_dropdown_change(self, event: pygame.event.Event) -> None:
+        """
+        This method handles changes in the dropdown menu for selecting cell rules.
+
+        Parameters
+        ----------
+        event : pygame.event.Event
+            The pygame event object for the dropdown menu change event.
+        """
         if event.ui_element == self.rules_dropdown:
             self.set_cell_rule(self.rules_dropdown.selected_option)
 
     def process_window_close(self, event: pygame.event.Event) -> None:
+        """
+        This method handles closing of the file dialog or overwrite dialog windows.
+
+        Parameters
+        ----------
+        event : pygame.event.Event
+            The pygame event object for the window close event.
+        """
         if event.ui_element == self.file_dialog:
             self.save_state_button.enable()
             self.load_state_button.enable()
@@ -538,6 +679,14 @@ class CellularAutomataApp:
             self.overwrite_dialog = None
 
     def process_file_dialog_selection(self, event: pygame.event.Event) -> None:
+        """
+        This method handles the selection of a file path in the file dialog.
+
+        Parameters
+        ----------
+        event : pygame.event.Event
+            The pygame event object for the file dialog path selection event.
+        """
         if not self.file_dialog.load:
             self.save_state(event.text)
 
@@ -546,9 +695,20 @@ class CellularAutomataApp:
         print(event.text)
 
     def process_confirmation_dialog_confirmed(self, event: pygame.event.Event):
+        """
+        This method handles confirmation of the overwrite dialog, saving the grid state to the specified file path.
+
+        Parameters
+        ----------
+        event : pygame.event.Event
+            The pygame event object for the confirmation dialog confirmed event.
+        """
         self.cell_grid.ca.save_grid_to_file(self.overwrite_dialog.overwrite_path)
 
     def process_events(self) -> None:
+        """
+        This method processes all pygame events in the event queue, calling the appropriate method for each event type.
+        """
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.is_running = False
@@ -597,6 +757,10 @@ class CellularAutomataApp:
             self.cell_grid.update()
 
     def run(self) -> None:
+        """
+        This method is the main loop of the application, processing events, updating the UI manager, drawing the cell grid,
+        and updating the display.
+        """
         while self.is_running:
             time_delta = self.clock.tick(self.fps) / 1000.0
 
