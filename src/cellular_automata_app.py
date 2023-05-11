@@ -29,7 +29,6 @@ class CellularAutomataApp:
         # Setup UI elements
         self.window_size = (1400, 1000)
         self.window_surface = pygame.display.set_mode(self.window_size)
-        # self.zoom_size = (int(self.window_size[0]/self.zoom), int(self.window_size[1]/self.zoom))
 
         self.ui_manager = UIManager(self.window_size, "data/themes/theme.json")
 
@@ -117,7 +116,7 @@ class CellularAutomataApp:
         self.speed_slider = UIHorizontalSlider(
             panel_item_rect,
             60,
-            (1, 120),
+            (10, 120),
             manager=self.ui_manager,
             container=self.control_panel,
             anchors={"top_target": self.spped_slider_label},
@@ -189,7 +188,6 @@ class CellularAutomataApp:
             object_id="#use_seed_button",
             anchors={"top_target": self.seed_text_entry},
         )
-        print(self.use_seed_button.get_object_ids())
 
         self.current_seed_button = UIButton(
             panel_item_rect,
