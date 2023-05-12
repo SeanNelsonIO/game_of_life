@@ -101,13 +101,13 @@ class CellularAutomata:
         if load_seed:
             self.interpret_seed_str(lines[0])
 
-        self.grid = np.array(
-            [
-                [int(lines[i + 1][j]) for j in range(self.grid_size[1])]
-                for i in range(self.grid_size[0])
-            ],
-            dtype=int,
-        )
+        state_width = len(lines[1]) - 1
+        state_height = len(lines) - 1
+        self.grid = np.zeros(self.grid_size)
+
+        for i in range(min(self.grid_size[0], state_height)):
+            for j in range(min(self.grid_size[1], state_width)):
+                self.grid[i][j] = lines[i + 1][j]
 
     def interpret_seed_str(self, seed_str) -> None:
         """

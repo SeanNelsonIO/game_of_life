@@ -18,7 +18,10 @@ class Painter:
 
     Methods
     -------
-    __call__(previous_pos, current_pos, padding, brush_size, erase=False, shape="Circle"):
+    __call__(
+        previous_pos, current_pos, padding, brush_size,
+        erase=False, hover=False shape="Circle"
+    ):
         Calls the paint method with the given parameters.
     paint(previous_pos, current_pos, padding, brush_size, shape):
         Paints or stamp a shape on the grid.
@@ -54,18 +57,23 @@ class Painter:
         padding,
         brush_size,
         erase=False,
+        hover=False,
         shape="Circle",
     ) -> None:
         # padding = (self.cell_grid.pad_width, self.cell_grid.pad_height)
 
         if erase:
             self.fill_value = 0
+        elif hover:
+            self.fill_value = -1
         else:
             self.fill_value = 1
 
-        self.paint(previous_pos, current_pos, padding, brush_size, shape)
+        self.paint(previous_pos, current_pos, padding, brush_size, shape, hover)
 
-    def paint(self, previous_pos, current_pos, padding, brush_size, shape) -> None:
+    def paint(
+        self, previous_pos, current_pos, padding, brush_size, shape, hover=False
+    ) -> None:
         """
         Paints or stamps a shape on the grid.
 
@@ -82,12 +90,15 @@ class Painter:
         shape : str
             The shape to paint.
         """
-        if not previous_pos or not current_pos:
-            return
+        if not hover:
+            if not previous_pos or not current_pos:
+                return
 
         if shape != "Circle":
             # Draw the shape at the current position
-            self.stamp_tool(current_pos, padding, shape)
+            self.stamp_tool(current_pos, padding, shape, hover)
+            return
+        elif hover:
             return
 
         # Draw the circle at the current position

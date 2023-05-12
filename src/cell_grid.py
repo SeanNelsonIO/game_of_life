@@ -145,12 +145,15 @@ class CellGrid:
             The current zoom level.
         visible_offset : tuple[int, int]
             The offset of the visible area from the top-left corner of the grid.
-        bg_colour : tuple[int, int, int]
-            The background color of the grid.
-        empty_space_colour : tuple[int, int, int]
-            The color of the empty spaces in the grid.
-        cell_colour : tuple[int, int, int]
-            The color of the cells in the grid.
+        bg_colour : Colour
+            The background colour of the grid.
+        empty_space_colour : Colour
+            The colour of the empty spaces in the grid.
+        cell_colour : Colour
+            The colour of the cells in the grid.
+        hovered_colour: Colour
+            The colour of hovered cells in the grid.
+
         """
 
         # Initialise grid parameters
@@ -193,9 +196,12 @@ class CellGrid:
         self.bg_colour = colours.BLACK
         self.empty_space_colour = colours.WHITE
         self.cell_colour = colours.RED
+        self.hovered_colour = colours.LIGHT_RED
+
+        self.hovered_cells = []
 
         # debug
-        self.print_params()
+        # self.print_params()
 
     def set_cell_dimensions(self, width: int, height: int, margin: int) -> None:
         """
@@ -333,7 +339,6 @@ class CellGrid:
             self.zoom_area = self.grid_surface.get_rect()
             self.zoom = prev_zoom
 
-        print(self.zoom_area)
         self.zoom_area.center = (
             int(self.grid_surface.get_width() / 2),
             int(self.grid_surface.get_height() / 2),
@@ -449,6 +454,15 @@ class CellGrid:
         """
         self.painter(previous_pos, current_pos, padding, brush_size, erase=True)
 
+    def reset_hovered(self):
+        """
+        Resets the previously hovered cells and clears the list
+
+        """
+        for row, col in self.hovered_cells:
+            self.ca.grid[row][col] = max(0, self.ca.grid[row][col])
+        self.hovered_cells = []
+
     def is_position_in_grid(self, row, col) -> bool:
         """
         Check if a given position is within the bounds of the grid.
@@ -514,16 +528,19 @@ class CellGrid:
                         col_line_end,
                         self.cell_margin,
                     )
+                colour = self.cell_colour
 
-                # Draw Alive Cells
+                # Draw Alive and Hovered Cells
                 if self.ca.grid[row][col] == 0:
                     continue
+                elif self.ca.grid[row][col] == -1:
+                    colour = self.hovered_colour
                 start_pos = (
                     (self.cell_margin + self.cell_width) * col + self.cell_margin,
                     (self.cell_margin + self.cell_height) * row + self.cell_margin,
                 )
                 cell_rect = pygame.Rect(start_pos, (self.cell_width, self.cell_height))
-                pygame.draw.rect(surface, self.cell_colour, cell_rect)
+                pygame.draw.rect(surface, colour, cell_rect)
 
         if self.allow_zoom:
             self.visible_surface.blit(self.grid_surface, (0, 0), self.zoom_area)
@@ -532,8 +549,6 @@ class CellGrid:
             )
         else:
             self.visible_surface = self.grid_surface
-
-        # self.visible_surface.blit(scaled_subsurface, self.visible_offset)
 
     # debug
     def print_params(self) -> None:

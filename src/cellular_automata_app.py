@@ -3,6 +3,7 @@ import os
 import pygame
 import pygame_gui
 import random
+import math
 
 from pygame_gui.elements import (
     UIButton,
@@ -75,6 +76,7 @@ class CellularAutomataApp:
         self.active_utility = None
         self.drawing = False
         self.previous_mouse_pos = None
+        self.moved = False
 
         self.create_ui()
 
@@ -744,6 +746,23 @@ class CellularAutomataApp:
                 if event.type != pygame_gui.UI_BUTTON_PRESSED:
                     self.drawing = False
                     self.previous_mouse_pos = None
+
+            # Hover stamp tool
+            if (
+                not event.type == pygame.MOUSEBUTTONDOWN
+                and not event.type == pygame.MOUSEBUTTONUP
+                and event.type == pygame.MOUSEMOTION
+                and self.active_utility == "Paint"
+            ):
+                pos = pygame.mouse.get_pos()
+                self.cell_grid.painter(
+                    self.previous_mouse_pos,
+                    pos,
+                    self.grid_padding,
+                    self.brush_size,
+                    shape=self.brush_type_dropdown.selected_option,
+                    hover=True,
+                )
             if event.type == pygame_gui.UI_BUTTON_PRESSED:
                 self.process_button_press(event)
             if event.type == pygame_gui.UI_DROP_DOWN_MENU_CHANGED:
@@ -777,6 +796,7 @@ class CellularAutomataApp:
         while self.is_running:
             time_delta = self.clock.tick(self.fps) / 1000.0
 
+            self.moved = False
             self.process_events()
 
             self.ui_manager.update(time_delta)

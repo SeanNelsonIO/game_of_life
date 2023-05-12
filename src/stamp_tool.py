@@ -34,8 +34,12 @@ class StampTool:
         ----------
         cell_grid : CellGrid
             The cellular automata grid on which the shapes are stamped.
+        last_hover : List
+            A list of the cells which have been toggled as "hovered" so they can
+            be removed after being drawn.
         """
         self.cell_grid = cell_grid
+        self.last_hover = []
         # default shapes
         self.shapes = {
             "Block": [[1, 1], [1, 1]],
@@ -49,7 +53,13 @@ class StampTool:
         self.load_shape("Gun.json")
         self.load_shape("Bomb.json")
 
-    def __call__(self, current_pos, padding, shape: str) -> None:
+    def __call__(
+        self,
+        current_pos: tuple[int, int],
+        padding: tuple[int, int],
+        shape: str,
+        hover: bool = False,
+    ) -> None:
         """
         Stamp a given shape onto the grid at the current position.
 
@@ -62,9 +72,15 @@ class StampTool:
         shape : str
             The name of the shape to be stamped.
         """
-        self.stamp_shape(current_pos, padding, shape)
+        self.stamp_shape(current_pos, padding, shape, hover)
 
-    def stamp_shape(self, pos, padding, shape: str) -> None:
+    def stamp_shape(
+        self,
+        pos: tuple[int, int],
+        padding: tuple[int, int],
+        shape: str,
+        hover: bool = False,
+    ) -> None:
         """
         Stamp a given shape onto the grid at a specified position.
 
@@ -76,8 +92,13 @@ class StampTool:
             The padding to be added to the position.
         shape : str
             The name of the shape to be stamped.
+        hover: bool
+            Draw a faded version of the stamp if this
         """
         shape = self.shapes[shape]
+
+        if hover:
+            self.cell_grid.reset_hovered()
 
         for row_offset, row in enumerate(shape):
             for col_offset, cell in enumerate(row):
@@ -89,7 +110,17 @@ class StampTool:
                 ) + col_offset
 
                 if self.cell_grid.is_position_in_grid(row_index, col_index):
-                    self.cell_grid.ca.grid[row_index][col_index] = cell
+                    if hover:
+                        # Set empty cells to 2 if part of stamp
+                        if (
+                            cell == 1
+                            and self.cell_grid.ca.grid[row_index][col_index] == 0
+                        ):
+                            self.cell_grid.ca.grid[row_index][col_index] = -1
+                            self.cell_grid.hovered_cells.append((row_index, col_index))
+
+                    else:
+                        self.cell_grid.ca.grid[row_index][col_index] = cell
 
     def load_shape(self, shape_file_name: str) -> None:
         """
