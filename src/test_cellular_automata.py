@@ -39,7 +39,7 @@ class TestCellularAutomata(unittest.TestCase):
         self.assertEqual(ca.rule, None)
         self.assertEqual(ca.seed, [0, 1, 0, 1, 0, 1, 0, 1, 0, 1])
         self.assertListEqual(
-            ca.grid,
+            ca.grid.tolist(),
             [
                 [0, 0, 1, 0, 0, 0, 0, 0, 1, 0],
                 [1, 0, 0, 1, 1, 1, 0, 1, 0, 0],
@@ -64,9 +64,9 @@ class TestCellularAutomata(unittest.TestCase):
         -------
         None
         """
-        ca = CellularAutomata((10, 10), None, [0, 1, 0, 1, 0, 1, 0, 1, 0, 1])
+        ca = CellularAutomata((10, 10), None, None)
         self.assertListEqual(
-            ca.create_grid(),
+            ca.grid.tolist(),
             [
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
