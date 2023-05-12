@@ -659,6 +659,8 @@ class CellularAutomataApp:
             rule_string = self.cell_grid.rule.__name__
             rule_state_path = f"grid_states/rule_defaults/{rule_string}.state"
             self.load_state(rule_state_path)
+            rule_name = self.rules_dropdown.selected_option
+            self.cell_grid.ca.update_rule(rule_name)
 
         if event.ui_element == self.save_state_button:
             self.create_file_dialog(False)

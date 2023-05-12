@@ -8,6 +8,8 @@ from typing import Callable
 import ast
 import numpy as np
 
+from src.rules import game_of_life_rule, rule_30, rule_90, rule_110, rule_184
+
 
 class CellularAutomata:
     """
@@ -64,6 +66,14 @@ class CellularAutomata:
         if seed:
             self.set_seed(seed)
 
+        self.rule_functions = {
+            "Game of Life": game_of_life_rule,
+            "Rule 30": rule_30,
+            "Rule 90": rule_90,
+            "Rule 110": rule_110,
+            "Rule 184": rule_184,
+        }
+
     def set_seed(self, seed: int | list[int] | None):
         """
         Set the seed for the random number generator or specific initial grid.
@@ -81,6 +91,19 @@ class CellularAutomata:
 
         np.random.seed(seed)
         self.populate_grid_with_seed()
+
+    def update_rule(self, rule_name: str) -> None:
+        """
+        Update the rule function.
+
+        Parameters
+        ----------
+        rule_name : str
+            The rule function to be update the ca.
+        """
+        rule_function = self.rule_functions[rule_name]
+
+        self.rule = rule_function
 
     def populate_grid_with_seed(self) -> None:
         """

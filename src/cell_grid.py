@@ -372,6 +372,17 @@ class CellGrid:
         """
         self.rule = rule
 
+    def update_rule(self, rule_name: str) -> None:
+        """
+        Update the rule for the cellular automata.
+
+        Parameters
+        ----------
+        rule_name : str
+            The rule for the cellular automata.
+        """
+        self.ca.update_rule(self.rule)
+
     def set_ca(self) -> None:
         """
         Initialize the cellular automata with the current rule and seed.
