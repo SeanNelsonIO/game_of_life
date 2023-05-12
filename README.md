@@ -93,3 +93,6 @@ quality work that has culminated in an even distribution of tasks and workload.
 
 Below is a screenshot of the github contributions to show the fairly even distribution of code produced by both members of the team:
 ![Code Contributions](bioContributions.jpg)
+
+## Link to GitHub Repository
+https://github.com/SeanNelsonIO/game_of_life
