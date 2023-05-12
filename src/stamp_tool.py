@@ -55,7 +55,7 @@ class StampTool:
         }
 
         # load shapes from json files - too large
-        self.load_shape("Gun.json")
+        self.load_shape("GliderGun.json")
         self.load_shape("Bomb.json")
         self.load_shape("DavidHilbert.json")
 
