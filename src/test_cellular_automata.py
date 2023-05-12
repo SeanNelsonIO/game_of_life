@@ -27,8 +27,9 @@ class TestCellularAutomata(unittest.TestCase):
         """
         Tests the initialisation of the CellularAutomata class.
 
-        The test checks if the grid size, rule and seed are correctly set during initialisation.
-        It also checks if the grid is correctly populated based on the seed.
+        The test checks if the grid size, rule and seed are
+        correctly set during initialisation. It also checks if the
+        grid is correctly populated based on the seed.
 
         Returns
         -------
