@@ -310,9 +310,10 @@ class CellularAutomataApp:
                 "Beehive",
                 "Blinker",
                 "Glider",
-                "Gun",
+                "Glider Gun",
                 "Beacon",
                 "Bomb",
+                "David Hilbert",
             ],
             "Circle",
             panel_item_rect,
@@ -510,7 +511,8 @@ class CellularAutomataApp:
         _, ext = os.path.splitext(path)
         if not ext == ".state":
             path += ".state"
-
+    
+        self.cell_grid.reset_hovered()
         self.cell_grid.ca.save_grid_to_file(path)
 
     def load_state(self, path: str) -> None:
@@ -608,9 +610,9 @@ class CellularAutomataApp:
             self.pause()
         if event.key == pygame.K_RETURN:
             self.next()
-        if event.key == pygame.K_d:
-            self.debug_mode = not self.debug_mode
-            self.ui_manager.set_visual_debug_mode(self.debug_mode)
+        # if event.key == pygame.K_d:
+        #     self.debug_mode = not self.debug_mode
+        #     self.ui_manager.set_visual_debug_mode(self.debug_mode)
 
     def process_button_press(self, event: pygame.event.Event) -> None:
         """
