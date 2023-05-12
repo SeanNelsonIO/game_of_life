@@ -3,7 +3,7 @@
 This project is visualisation tool for cellular automata, focused primarily around Conway's Game of Life, however, additional rules for celluar automata are available to experiment with.
 
 This project is developed by:
-**Sean Nelson** *(ll17s2n)* and **Steven Taylor** *(sc18sst)* for the submission of Coursework 2 for COMP5400M Bio-Inspired Computing
+**Sean Nelson** *(ll17s2n)* and **Steven Taylor** *(sc18sst)* for the submission of Coursework 2 for **COMP5400M Bio-Inspired Computing**
 
 ![Gif](CellularAutomataVideo.gif)
 
@@ -90,3 +90,6 @@ each made improvements and changes to all of the files within the project. We ha
 to the markers. We feel that directly separating these pieces of work would not have been beneficial to the overall quality of the project and have utilised our
 different strengths to produce a project which we are proud of and happy to present. Both of us working on the code project feel that we have equally produced good
 quality work that has culminated in an even distribution of tasks and workload.
+
+Below is a screenshot of the github contributions to show the fairly even distribution of code produced by both members of the team:
+![Code Contributions](bioContributions.jpg)
