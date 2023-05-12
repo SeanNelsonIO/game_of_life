@@ -1,3 +1,8 @@
+"""
+Filename: cellular_automata_app.py
+Primary Author: Steven Taylor
+"""
+
 import ast
 import os
 import pygame
@@ -29,7 +34,7 @@ class CellularAutomataApp:
         self.window_size = (1400, 1000)
         self.window_surface = pygame.display.set_mode(self.window_size)
 
-        self.ui_manager = UIManager(self.window_size, "data/themes/theme.json")
+        self.ui_manager = UIManager(self.window_size)
 
         self.ui_manager.preload_fonts(
             [{"name": "fira_code", "point_size": 14, "style": "bold"}]
@@ -511,7 +516,7 @@ class CellularAutomataApp:
         _, ext = os.path.splitext(path)
         if not ext == ".state":
             path += ".state"
-    
+
         self.cell_grid.reset_hovered()
         self.cell_grid.ca.save_grid_to_file(path)
 

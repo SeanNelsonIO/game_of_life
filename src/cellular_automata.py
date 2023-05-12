@@ -1,3 +1,8 @@
+"""
+Filename: cellular_automata.py
+Primary Author: Sean Nelson
+"""
+
 from typing import Callable
 
 import ast

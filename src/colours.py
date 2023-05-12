@@ -1,3 +1,8 @@
+"""
+Filename: colours.py
+Primary Author: Sean Nelson
+"""
+
 from pygame import Color as Colour
 
 WHITE = Colour(255, 255, 255)

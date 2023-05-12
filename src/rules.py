@@ -1,3 +1,9 @@
+"""
+Filename: rules.py
+Primary Author: Sean Nelson
+"""
+
+
 def game_of_life_rule(grid: list[list[int]], i: int, j: int):
     """
     Apply the Game of Life rule to a cell in a given grid.

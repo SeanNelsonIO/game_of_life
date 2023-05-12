@@ -1,3 +1,8 @@
+"""
+Filename: game_of_life_basic_app.py
+Primary Author: Steven Taylor
+"""
+
 import pygame
 
 from cellular_automata import CellularAutomata
