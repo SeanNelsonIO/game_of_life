@@ -1,3 +1,8 @@
+"""
+Filename: stamp_tool.py
+Primary Author: Sean Nelson
+"""
+
 import json
 
 
@@ -52,6 +57,7 @@ class StampTool:
         # load shapes from json files - too large
         self.load_shape("Gun.json")
         self.load_shape("Bomb.json")
+        self.load_shape("DavidHilbert.json")
 
     def __call__(
         self,
@@ -100,6 +106,10 @@ class StampTool:
         if hover:
             self.cell_grid.reset_hovered()
 
+        # Don't draw stamps if off grid
+        if pos[0] < padding[0] or pos[1] < padding[1]:
+            return
+
         for row_offset, row in enumerate(shape):
             for col_offset, cell in enumerate(row):
                 row_index = (pos[1] - padding[1]) // (
@@ -119,7 +129,7 @@ class StampTool:
                             self.cell_grid.ca.grid[row_index][col_index] = -1
                             self.cell_grid.hovered_cells.append((row_index, col_index))
 
-                    else:
+                    elif cell == 1:
                         self.cell_grid.ca.grid[row_index][col_index] = cell
 
     def load_shape(self, shape_file_name: str) -> None:
