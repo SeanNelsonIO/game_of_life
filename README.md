@@ -73,7 +73,7 @@ All of the code files in this submission have been documented using numpy style 
 ## Statement of Contribution
 
 For this group project, we divided the task among the group of 3 into the code implementation, by Steven Taylor and Sean Nelson,
-as well as a critical exploration of Conway's Game of Life, written solely by Farnaaz Gahazaani.
+as well as a critical exploration of Conway's Game of Life, written solely by Farnaaz Ghazaani.
 
 Breakdown for the code implementation:
 The project began initially with Sean building out the Cellular Automata logic, found in *cellular_automata.py* and *rules.py*,
